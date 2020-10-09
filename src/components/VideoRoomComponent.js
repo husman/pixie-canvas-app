@@ -1,14 +1,21 @@
 import React from "react";
-import { LocalRecorder, OpenVidu } from "openvidu-browser";
+import { OpenVidu } from "openvidu-browser";
+import StreamComponent from "./stream/StreamComponent";
+import OpenViduLayout from "../layout/openvidu-layout";
+import UserModel from "../models/user-model";
+import ToolbarComponent from "./toolbar/ToolbarComponent";
 import { useEffect } from "react";
 
 export default VideoRoomComponent = () => {
+  const layout = new OpenViduLayout();
+
+  /* Server Side Code */
   const [openviduServerUrl, setOpenviduServerUrl] = useState(
     "https://" + window.location.hostname + ":4443"
   ); // OPENVIDU_SERVER_URL; double check ternary
   const [openviduServerSecret, setOpenviduServerSecret] = useState("MY_SECRET"); // OPENVIDU SERVER SECRET; double check ternary
+
   const [hasBeenUpdated, setHasBeenUpdated] = useState(false);
-  const [layout, setLayout] = useState(new OpenViduLayout());
   const [sessionName, setSessionName] = useState("SessionA");
   const [userName, setUserName] = useState(
     "OpenVidu_User" + Math.floor(Math.random() * 100)
@@ -16,12 +23,10 @@ export default VideoRoomComponent = () => {
   const [mySessionId, setMySessionId] = useState(sessionName);
   const [myUserName, setMyUserName] = useState(userName);
   const [session, setSession] = useState(undefined);
-  const [localUser, setLocalUser] = useState(undefined);
+  const [localUser, setLocalUser] = useState(new UserModel());
   const [subscribers, setSubscribers] = useState([]);
   const [token, setToken] = useState(undefined);
-  const [showExtensionDialog, setShowExtensionDialog] = useState(false);
   const [connectError, setConnectError] = useState("");
-  const [chatDisplay, setChatDisplay] = useState("none"); // not video/audio reqs
 
   useEffect(() => {
     const openViduLayoutOptions = {
@@ -37,7 +42,6 @@ export default VideoRoomComponent = () => {
       animate: true, // Whether you want to animate the transitions
     };
 
-    // CHANGE DOCUMENT.getelementbyid
     layout.initLayoutContainer(
       document.getElementById("layout"),
       openViduLayoutOptions
@@ -77,11 +81,6 @@ export default VideoRoomComponent = () => {
       updateLayout();
       publisher.videos[0].video.parentElement.classList.remove("custom-class");
     });
-    // if(localUser.isScreenShareActive()){
-    //   sendSignalUserChanged({
-    //     isScreenShareActive: localUser.isScreenShareActive(),
-    //   });
-    // }
     sendSignalUserChanged({
       isScreenShareActive: localUser.isScreenShareActive(),
     });
@@ -104,6 +103,7 @@ export default VideoRoomComponent = () => {
       getToken()
         .then((token) => {
           console.log(token);
+          setToken(token);
           connect(token);
         })
         .catch((error) => {
@@ -156,7 +156,6 @@ export default VideoRoomComponent = () => {
       insertMode: "APPEND",
     });
 
-    // HMMMMM????????????????????????????????????????????
     if (session.capabilities.publish) {
       session.publish(publisher).then(() => {
         if (joinSession()) {
@@ -183,15 +182,14 @@ export default VideoRoomComponent = () => {
       mySession.disconnect();
     }
 
-    // Empty all properties... Leave session
+    // Clear Properties
     OV = null;
     setSession(undefined);
     setSubscribers([]);
-    setMySessionId("SessionA"); // hardcoded session A, needs to be a state !!!!!!!
+    setMySessionId("SessionA");
     setMyUserName("OpenVidu_User" + Math.floor(Math.random() * 100));
     setLocalUser(undefined);
 
-    // DOUBLE CHECK DIFF BT FUNCTION AND STATE VARIABLE!!!!!
     if (leaveSession) {
       leaveSession();
     }
@@ -335,78 +333,57 @@ export default VideoRoomComponent = () => {
     }
   };
 
-  /*
-  screenShare = () => {
-    const videoSource =
-      navigator.userAgent.indexOf("Firefox") !== -1 ? "window" : "screen";
-    const publisher = OV.initPublisher(
-      undefined,
-      {
-        videoSource: videoSource,
-        publishAudio: localUser.isAudioActive(),
-        publishVideo: localUser.isVideoActive(),
-        mirror: false,
-      },
-      (error) => {
-        if (error && error.name === "SCREEN_EXTENSION_NOT_INSTALLED") {
-          setShowExtensionDialog(true);
-        } else if (error && error.name === "SCREEN_SHARING_NOT_SUPPORTED") {
-          alert("Your browser does not support screen sharing");
-        } else if (error && error.name === "SCREEN_EXTENSION_DISABLED") {
-          alert("You need to enable screen sharing extension");
-        } else if (error && error.name === "SCREEN_CAPTURE_DENIED") {
-          alert("You need to choose a window or application to share");
-        }
-      }
-    );
-
-    publisher.once("accessAllowed", () => {
-      session.unpublish(localUser.getStreamManager());
-      localUser.setStreamManager(publisher);
-      session.publish(localUser.getStreamManager()).then(() => {
-        localUser.setScreenShareActive(true);
-        setLocalUser(localUser); // callback function localUser
-      });
-    });
-
-    publisher.on("streamPlaying", () => {
-      updateLayout();
-      publisher.videos[0].video.parentElement.classList.remove("custom-class");
-    });
-  };
-
-  closeDialogExtension = () => {
-    setShowExtensionDialog(false);
-  };
-
-  stopScreenShare = () => {
-    session.unpublish(localUser.getsTREAMmanager());
-    connectWebCam();
-  };
-
-  checkSomeoneShareScreen = () => {
-    let isScreenShared;
-    isScreenShared =
-      subscribers.some((user) => user.isScreenShareActive()) ||
-      localUser.isScreenShareActive();
-
-    const openviduLayoutOptions = {
-      maxRatio: 3 / 2,
-      minRatio: 9 / 16,
-      fixedRatio: isScreenShared,
-      bigClass: "OV_big",
-      bigPercentage: 0.8,
-      bigFixedRatio: false,
-      bigMaxRatio: 3 / 2,
-      bigMinRatio: 9 / 16,
-      bigFirst: true,
-      animate: true,
-    };
-    layout.setLayoutOptions(openviduLayoutOptions);
-    updateLayout();
-  };
-  */
   /**
-   * Omitted Toggle Chat for now
+   * Omitted Screen Share Fcns
    */
+  /**
+   * Omitted Chat Fcns
+   */
+
+  checkSize = () => {
+    if (
+      document.getElementById("layout").offsetWidth <= 700 &&
+      !hasBeenUpdated
+    ) {
+      setHasBeenUpdated(true);
+    }
+    if (document.getElementById("layout").offsetWidth > 700 && hasBeenUpdated) {
+      setHasBeenUpdated(false);
+    }
+  };
+
+  return (
+    <div className="container" id="container">
+      <ToolbarComponent
+        sessionId={mySessionId}
+        user={localUser}
+        camStatusChanged={camStatusChanged}
+        micStatusChanged={micStatusChanged}
+        toggleFullscreen={toggleFullscreen}
+        leaveSession={leaveSession}
+      />
+      <div id="layout" className="bounds">
+        {localUser !== undefined && localUser.getStreamManager() !== undefined && (
+          <div className="OT_root OT_publisher custom-class" id="localUser">
+            <StreamComponent
+              user={localUser}
+              handleNickname={nicknameChanged}
+            />
+          </div>
+        )}
+        {subscribers.map((sub, i) => (
+          <div
+            key={i}
+            className="OT_root OT_publisher custom-class"
+            id="remoteUsers"
+          >
+            <StreamComponent
+              user={sub}
+              streamId={sub.streamManager.stream.streamId}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
