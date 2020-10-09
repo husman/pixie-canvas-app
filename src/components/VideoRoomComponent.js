@@ -1,20 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { OpenVidu } from "openvidu-browser";
 import StreamComponent from "./stream/StreamComponent";
 import OpenViduLayout from "../layout/openvidu-layout";
 import UserModel from "../models/user-model";
 import ToolbarComponent from "./toolbar/ToolbarComponent";
-import { useEffect } from "react";
 
 export default VideoRoomComponent = () => {
   const layout = new OpenViduLayout();
 
-  /* Server Side Code */
+  /* Server Side Variables */
   const [openviduServerUrl, setOpenviduServerUrl] = useState(
     "https://" + window.location.hostname + ":4443"
-  ); // OPENVIDU_SERVER_URL; double check ternary
-  const [openviduServerSecret, setOpenviduServerSecret] = useState("MY_SECRET"); // OPENVIDU SERVER SECRET; double check ternary
+  );
+  const [openviduServerSecret, setOpenviduServerSecret] = useState("MY_SECRET");
 
+  /* Client Variables */
   const [hasBeenUpdated, setHasBeenUpdated] = useState(false);
   const [sessionName, setSessionName] = useState("SessionA");
   const [userName, setUserName] = useState(
