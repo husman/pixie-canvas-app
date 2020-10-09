@@ -3,22 +3,16 @@ import { LocalRecorder, OpenVidu } from "openvidu-browser";
 import { useEffect } from "react";
 
 export default VideoRoomComponent = () => {
-  // PROPS ~~
-  // OPENVIDU_SERVER_URL; double check ternary
   const [openviduServerUrl, setOpenviduServerUrl] = useState(
     "https://" + window.location.hostname + ":4443"
-  );
-  // OPENVIDU SERVER SECRET; double check ternary
-  const [openviduServerSecret, setOpenviduServerSecret] = useState("MY_SECRET");
+  ); // OPENVIDU_SERVER_URL; double check ternary
+  const [openviduServerSecret, setOpenviduServerSecret] = useState("MY_SECRET"); // OPENVIDU SERVER SECRET; double check ternary
   const [hasBeenUpdated, setHasBeenUpdated] = useState(false);
-  // const layout = new OpenViduLayout();
+  const [layout, setLayout] = useState(new OpenViduLayout());
   const [sessionName, setSessionName] = useState("SessionA");
   const [userName, setUserName] = useState(
     "OpenVidu_User" + Math.floor(Math.random() * 100)
   );
-  // PROPS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  // STATE ~~
   const [mySessionId, setMySessionId] = useState(sessionName);
   const [myUserName, setMyUserName] = useState(userName);
   const [session, setSession] = useState(undefined);
@@ -26,10 +20,8 @@ export default VideoRoomComponent = () => {
   const [subscribers, setSubscribers] = useState([]);
   const [token, setToken] = useState(undefined);
   const [connectError, setConnectError] = useState("");
-  // const [chatDisplay, setChatDisplay] = useState("none"); not video/audio reqs
-  // STATE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  const [chatDisplay, setChatDisplay] = useState("none"); // not video/audio reqs
 
-  // componentDidMount
   useEffect(() => {
     const openViduLayoutOptions = {
       maxRatio: 3 / 2, // The narrowest ratio that will be used (default 2x3)
@@ -45,43 +37,60 @@ export default VideoRoomComponent = () => {
     };
 
     // CHANGE DOCUMENT.getelementbyid
-    this.layout.initLayoutContainer(
+    layout.initLayoutContainer(
       document.getElementById("layout"),
       openViduLayoutOptions
     );
 
-    window.addEventListener("beforeunload", this.onbeforeunload);
-    window.addEventListener("resize", this.updateLayout);
-    window.addEventListener("resize", this.checkSize);
+    window.addEventListener("beforeunload", onbeforeunload);
+    window.addEventListener("resize", updateLayout);
+    window.addEventListener("resize", checkSize);
 
     return () => {
-      window.removeEventListener("beforeunload", this.onbeforeunload);
-      window.removeEventListener("resize", this.updateLayout);
-      window.removeEventListener("resize", this.checkSize);
+      window.removeEventListener("beforeunload", onbeforeunload);
+      window.removeEventListener("resize", updateLayout);
+      window.removeEventListener("resize", checkSize);
     };
   }, []);
 
+  useEffect(() => {
+    subscribeToStreamCreated();
+    connectToSession();
+  }, [session]);
+
+  useEffect(() => {
+    if (localUser) {
+      sendSignalUserChanged({
+        isAudioActive: localUser.isAudioActive(),
+        isVideoActive: localUser.isVideoActive(),
+        nickname: localUser.getNickname(),
+        isScreenShareActive: localUser.isScreenShareActive(),
+      });
+    }
+    updateLayout();
+    checkSomeoneShareScreen();
+  }, [subscribers]);
+
+  useEffect(() => {
+    localUser.getStreamManager().on("streamPlaying", (e) => {
+      updateLayout();
+      publisher.videos[0].video.parentElement.classList.remove("custom-class");
+    });
+  }, [localUser]);
+
   onbeforeunload = (event) => {
-    this.leaveSession();
+    leaveSession();
   };
 
   joinSession = () => {
-    this.OV = new OpenVidu();
-    this.setState(
-      {
-        session: this.OV.initSession(),
-      },
-      () => {
-        this.subscribeToStreamCreated();
-        this.connectToSession();
-      }
-    );
+    OV = new OpenVidu();
+    setSession(OV.initSession());
   };
 
   connectToSession = () => {
     if (token !== undefined) {
       console.log("token received: ", token);
-      connect(token); // v. this.connect()
+      connect(token);
     } else {
       getToken()
         .then((token) => {
@@ -100,7 +109,7 @@ export default VideoRoomComponent = () => {
             error.message
           );
           alert("There was an error getting the token:", error.message);
-        }); // v. this.getToken()
+        });
     }
   };
 
@@ -128,7 +137,7 @@ export default VideoRoomComponent = () => {
   };
 
   connectWebCam = () => {
-    let publisher = this.OV.initPublisher(undefined, {
+    let publisher = OV.initPublisher(undefined, {
       audioSource: undefined,
       videoSource: undefined,
       publishAudio: localUser.isAudioActive(),
@@ -151,12 +160,132 @@ export default VideoRoomComponent = () => {
     localUser.setConnectionId(session.connection.connectionId);
     localUser.setScreenShareActive(false);
     localUser.setStreamManager(publisher);
-    subscribeToUserChanged(); // had this.
-    subscribeToStreamDestroyed(); // had this.
+    subscribeToUserChanged();
+    subscribeToStreamDestroyed();
     sendSignalUserChanged({
       isScreenShareActive: localUser.isScreenShareActive(),
-    }); // had this.
-
+    });
     setLocalUser(localUser);
+  };
+
+  leaveSession = () => {
+    const mySession = session;
+    if (mySession) {
+      mySession.disconnect();
+    }
+
+    // Empty all properties... Leave session
+    OV = null;
+    setSession(undefined);
+    setSubscribers([]);
+    setMySessionId("SessionA"); // hardcoded session A, needs to be a state !!!!!!!
+    setMyUserName("OpenVidu_User" + Math.floor(Math.random() * 100));
+    setLocalUser(undefined);
+
+    // DOUBLE CHECK DIFF BT FUNCTION AND STATE VARIABLE!!!!!
+    if (leaveSession) {
+      leaveSession();
+    }
+  };
+
+  // Can you update local user this way??
+  camStatusChanged = () => {
+    localUser.setVideoActive(!localUser.isVideoActive());
+    localUser.getStreamManager().publishVideo(localUser.isVideoActive());
+    sendSignalUserChanged({ isVideoActive: localUser.isVideoActive() });
+    setLocalUser(localUser);
+  };
+
+  micStatusChanged = () => {
+    localUser.setAudioActive(!localUser.isAudioActive());
+    localUser.getStreamManager().publishAudio(localUser.isAudioActive());
+    //?????????????? passing in part object is AudioActive
+    sendSignalUserChanged({ isAudioActive: localUser.isAudioActive() });
+    setLocalUser(localUser);
+  };
+
+  nicknameChanged = (nickname) => {
+    let myLocalUser = localUser; // same name error??????
+    myLocalUser.setNickname(nickname);
+    setLocalUser(myLocalUser);
+    sendSignalUserChanged({ nickname: myLocalUser.getNickname() });
+  };
+
+  deleteSubscriber = (stream) => {
+    const remoteUsers = subscribers;
+    const userStream = remoteUsers.filter(
+      (user) => user.getStreamManager().stream === stream
+    )[0];
+    let index = remoteUsers.indexOf(userStream, 0);
+    if (index > -1) {
+      remoteUsers.splice(index, 1);
+      setSubscribers(remoteUsers);
+    }
+  };
+
+  subscribeToStreamCreated = () => {
+    session.on("streamCreated", (event) => {
+      const subscriber = session.subscribe(event.stream, undefined);
+      const mySubscribers = subscribers;
+      subscriber.on("streamPlaying", (e) => {
+        checkSomeoneShareScreen();
+        subscriber.videos[0].video.parentElement.classList.remove(
+          "custom-class"
+        );
+      });
+      const newUser = new UserModel();
+      newUser.setStreamManager(subscriber);
+      newUser.setConnectionId(event.stream.connection.connectionId);
+      newUser.setType("remote");
+      const nickname = event.stream.connection.data.split("%")[0];
+      newUser.setNickname(JSON.parse(nickname).clientData);
+      mySubscribers.push(newUser);
+      setSubscribers(mySubscribers);
+    });
+  };
+
+  subscribeToStreamDestroyed = () => {
+    // On every Stream destroyed...
+    session.on("streamDestroyed", (event) => {
+      // Remove the stream from 'subscribers' array
+      deleteSubscriber(event.stream);
+      setTimeout(() => {
+        checkSomeoneShareScreen();
+      }, 20);
+      event.preventDefault();
+      updateLayout();
+    });
+  };
+
+  subscribeToUserChanged = () => {
+    session.on("signal:userChanged", (event) => {
+      let remoteUsers = subscribers;
+
+      remoteUsers.forEach((user) => {
+        if (user.getConnectionId() === event.from.connectionId) {
+          const data = JSON.parse(event.data);
+          console.log("EVENT REMOTE: ", event.data);
+          if (data.isAudioActive !== undefined) {
+            user.setAudioActive(data.isAudioActive);
+          }
+          if (data.isVideoActive !== undefined) {
+            user.setVideoActive(data.isVideoActive);
+          }
+          if (data.nickname !== undefined) {
+            user.setNickname(data.nickname);
+          }
+          if (data.isScreenShareActive !== undefined) {
+            user.setScreenShareActive(data.isScreenShareActive);
+          }
+        }
+      });
+    });
+    setSubscribers(remoteUsers);
+  };
+
+  updateLayout = () => {
+    setTimeout(() => {
+      layout.updateLayout();
+    }, timeout);
   };
 };
