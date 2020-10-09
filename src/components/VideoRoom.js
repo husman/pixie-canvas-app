@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { OpenVidu } from "openvidu-browser";
 import StreamComponent from "./stream/StreamComponent";
 import OpenViduLayout from "../layout/openvidu-layout";
-import UserModel from "../models/user-model";
+import UserModel from "../models/UserModels";
 import ToolbarComponent from "./toolbar/Toolbar";
 
-export default VideoRoom = (props) => {
+export default function VideoRoom(props) {
   const {
     // openviduServerUrl,
     // openviduSecret,
@@ -13,27 +13,25 @@ export default VideoRoom = (props) => {
     user,
     token,
     error,
-    joinSession,
-    leaveSession,
   } = props;
 
   const layout = new OpenViduLayout();
   const [openviduServerSecret, setOpenviduServerSecret] = useState(
-    openviduServerSecret ? openviduSeverSecret : "MY_SECRET"
+    props.openviduServerSecret ? props.openviduSeverSecret : "MY_SECRET"
   );
   const [hasBeenUpdated, setHasBeenUpdated] = useState(false);
-  const [sessionName, setSessionName] = useState(
+  const [mySessionName, setSessionName] = useState(
     sessionName ? sessionName : "SessionA"
   );
   const [userName, setUserName] = useState(
     user ? user : "OpenVidu_User" + Math.floor(Math.random() * 100)
   );
-  const [mySessionId, setMySessionId] = useState(sessionName);
+  const [mySessionId, setMySessionId] = useState(mySessionName);
   const [myUserName, setMyUserName] = useState(userName);
   const [session, setSession] = useState(undefined);
   const [localUser, setLocalUser] = useState(new UserModel());
   const [subscribers, setSubscribers] = useState([]);
-  const [token, setToken] = useState(undefined);
+  const [OV, setOV] = useState(undefined);
 
   useEffect(() => {
     const openViduLayoutOptions = {
@@ -80,7 +78,7 @@ export default VideoRoom = (props) => {
       });
     }
     updateLayout();
-    checkSomeoneShareScreen();
+    // checkSomeoneShareScreen();
   }, [subscribers]);
 
   useEffect(() => {
@@ -107,7 +105,8 @@ export default VideoRoom = (props) => {
     const data = await fetch(
       `http://pixie.neetos.com/token?meetingUrl=${meetingUrl}`
     );
-    setToken(data.token);
+    // setMyToken(data.token);
+    return data.token;
   };
 
   onbeforeunload = (event) => {
@@ -115,7 +114,7 @@ export default VideoRoom = (props) => {
   };
 
   const joinSession = () => {
-    OV = new OpenVidu();
+    setOV(new OpenVidu());
     setSession(OV.initSession());
   };
 
@@ -127,7 +126,6 @@ export default VideoRoom = (props) => {
       getToken()
         .then((token) => {
           console.log(token);
-          setToken(token);
           connect(token);
         })
         .catch((e) => {
@@ -188,8 +186,8 @@ export default VideoRoom = (props) => {
 
     if (session.capabilities.publish) {
       session.publish(publisher).then(() => {
-        if (joinSession) {
-          joinSession();
+        if (props.joinSession) {
+          props.joinSession();
         }
       });
     }
@@ -220,8 +218,8 @@ export default VideoRoom = (props) => {
     setMyUserName("OpenVidu_User" + Math.floor(Math.random() * 100));
     setLocalUser(undefined);
 
-    if (leaveSession) {
-      leaveSession();
+    if (props.leaveSession) {
+      props.leaveSession();
     }
   };
 
@@ -263,7 +261,7 @@ export default VideoRoom = (props) => {
       const subscriber = session.subscribe(event.stream, undefined);
       const mySubscribers = subscribers;
       subscriber.on("streamPlaying", (e) => {
-        checkSomeoneShareScreen();
+        // checkSomeoneShareScreen();
         subscriber.videos[0].video.parentElement.classList.remove(
           "custom-class"
         );
@@ -284,9 +282,9 @@ export default VideoRoom = (props) => {
     session.on("streamDestroyed", (event) => {
       // Remove the stream from 'subscribers' array
       deleteSubscriber(event.stream);
-      setTimeout(() => {
-        checkSomeoneShareScreen();
-      }, 20);
+      // setTimeout(() => {
+      // checkSomeoneShareScreen();
+      // }, 20);
       event.preventDefault();
       updateLayout();
     });
@@ -314,14 +312,14 @@ export default VideoRoom = (props) => {
           }
         }
       });
+      setSubscribers(remoteUsers);
     });
-    setSubscribers(remoteUsers);
   };
 
   const updateLayout = () => {
     setTimeout(() => {
       layout.updateLayout();
-    }, timeout);
+    }, 20);
   };
 
   const sendSignalUserChanged = (data) => {
@@ -416,4 +414,4 @@ export default VideoRoom = (props) => {
       </div>
     </div>
   );
-};
+}

@@ -1,21 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ToolbarComponent.css";
-import AppBar from "material-ui/core/AppBar";
-import Toolbar from "material-ui/core/Toolbar";
 
-import Mic from "material-ui/svg-icons/av/mic";
-import MicOff from "material-ui/svg-icons/av/mic-off";
-import Videocam from "material-ui/svg-icons/av/videocam";
-import Fullscreen from "material-ui/svg-icons/navigation/fullscreen";
-import FullscreenExit from "material-ui/svg-icons/navigation/fullscreen-exit";
-import PictureInPicture from "material-ui/svg-icons/action/picture-in-picture";
-import PowerSettingsNew from "material-ui/svg-icons/action/power-settings-new";
+import {
+  AvVideocamOff as VideocamOff,
+  AvMicOff as MicOff,
+  AvMic as Mic,
+  AvVideocam as Videocam,
+  NavigationFullscreen as Fullscreen,
+  NavigationFullscreenExit as FullscreenExit,
+  ActionPowerSettingsNew as PowerSettingsNew,
+} from "material-ui/svg-icons";
+import { AppBar, Toolbar as ToolBar, IconButton } from "@material-ui/core";
 
-import IconButton from "material-ui/core/IconButton";
-import { render } from "@testing-library/react";
-
-export default Toolbar = (mySessionId, localUser) => {
+export default function Toolbar(props) {
   const [fullscreen, setFullscreen] = useState(false);
+  const mySessionId = props.sessionId;
+  const localUser = props.user;
 
   const micStatusChanged = () => {
     micStatusChanged();
@@ -36,7 +36,7 @@ export default Toolbar = (mySessionId, localUser) => {
 
   return (
     <AppBar className="toolbar" id="header">
-      <Toolbar className="toolbar">
+      <ToolBar className="toolbar">
         <div id="navSessionInfo">
           {mySessionId && (
             <div id="titleContent">
@@ -90,7 +90,7 @@ export default Toolbar = (mySessionId, localUser) => {
             <PowerSettingsNew />
           </IconButton>
         </div>
-      </Toolbar>
+      </ToolBar>
     </AppBar>
   );
-};
+}
