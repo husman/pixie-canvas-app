@@ -19,6 +19,7 @@ export default VideoRoomComponent = () => {
   const [localUser, setLocalUser] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
   const [token, setToken] = useState(undefined);
+  const [showExtensionDialog, setShowExtensionDialog] = useState(false);
   const [connectError, setConnectError] = useState("");
   const [chatDisplay, setChatDisplay] = useState("none"); // not video/audio reqs
 
@@ -75,6 +76,14 @@ export default VideoRoomComponent = () => {
     localUser.getStreamManager().on("streamPlaying", (e) => {
       updateLayout();
       publisher.videos[0].video.parentElement.classList.remove("custom-class");
+    });
+    // if(localUser.isScreenShareActive()){
+    //   sendSignalUserChanged({
+    //     isScreenShareActive: localUser.isScreenShareActive(),
+    //   });
+    // }
+    sendSignalUserChanged({
+      isScreenShareActive: localUser.isScreenShareActive(),
     });
   }, [localUser]);
 
@@ -188,7 +197,6 @@ export default VideoRoomComponent = () => {
     }
   };
 
-  // Can you update local user this way??
   camStatusChanged = () => {
     localUser.setVideoActive(!localUser.isVideoActive());
     localUser.getStreamManager().publishVideo(localUser.isVideoActive());
@@ -199,13 +207,12 @@ export default VideoRoomComponent = () => {
   micStatusChanged = () => {
     localUser.setAudioActive(!localUser.isAudioActive());
     localUser.getStreamManager().publishAudio(localUser.isAudioActive());
-    //?????????????? passing in part object is AudioActive
     sendSignalUserChanged({ isAudioActive: localUser.isAudioActive() });
     setLocalUser(localUser);
   };
 
   nicknameChanged = (nickname) => {
-    let myLocalUser = localUser; // same name error??????
+    let myLocalUser = localUser;
     myLocalUser.setNickname(nickname);
     setLocalUser(myLocalUser);
     sendSignalUserChanged({ nickname: myLocalUser.getNickname() });
@@ -287,5 +294,92 @@ export default VideoRoomComponent = () => {
     setTimeout(() => {
       layout.updateLayout();
     }, timeout);
+  };
+
+  sendSignalUserChanged = (data) => {
+    const signalOptions = {
+      data: JSON.stringify(data),
+      type: "userChanged",
+    };
+    session.signal(signalOptions);
+  };
+
+  toggleFullscreen = () => {
+    const document = window.document;
+    const fs = document.getElementById("container");
+    if (
+      !document.fullscreenElement &&
+      !document.mozFullScreenElement &&
+      !document.webkitFullscreenElement &&
+      !document.msFullscreenElement
+    ) {
+      if (fs.requestFullscreen) {
+        fs.requestFullscreen();
+      } else if (fs.msRequestFullscreen) {
+        fs.msRequestFullscreen();
+      } else if (fs.mozRequestFullScreen) {
+        fs.mozRequestFullScreen();
+      } else if (fs.webkitRequestFullscreen) {
+        fs.webkitRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
+  };
+
+  screenShare = () => {
+    const videoSource =
+      navigator.userAgent.indexOf("Firefox") !== -1 ? "window" : "screen";
+    const publisher = OV.initPublisher(
+      undefined,
+      {
+        videoSource: videoSource,
+        publishAudio: localUser.isAudioActive(),
+        publishVideo: localUser.isVideoActive(),
+        mirror: false,
+      },
+      (error) => {
+        if (error && error.name === "SCREEN_EXTENSION_NOT_INSTALLED") {
+          setShowExtensionDialog(true);
+        } else if (error && error.name === "SCREEN_SHARING_NOT_SUPPORTED") {
+          alert("Your browser does not support screen sharing");
+        } else if (error && error.name === "SCREEN_EXTENSION_DISABLED") {
+          alert("You need to enable screen sharing extension");
+        } else if (error && error.name === "SCREEN_CAPTURE_DENIED") {
+          alert("You need to choose a window or application to share");
+        }
+      }
+    );
+
+    publisher.once("accessAllowed", () => {
+      session.unpublish(localUser.getStreamManager());
+      localUser.setStreamManager(publisher);
+      session.publish(localUser.getStreamManager()).then(() => {
+        localUser.setScreenShareActive(true);
+        setLocalUser(localUser); // callback function localUser
+      });
+    });
+
+    publisher.on("streamPlaying", () => {
+      updateLayout();
+      publisher.videos[0].video.parentElement.classList.remove("custom-class");
+    });
+  };
+
+  closeDialogExtension = () => {
+    setShowExtensionDialog(false);
+  };
+
+  stopScreenShare = () => {
+    session.unpublish(localUser.getsTREAMmanager());
+    connectWebCam();
   };
 };
