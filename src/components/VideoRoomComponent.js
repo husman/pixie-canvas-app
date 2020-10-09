@@ -1,5 +1,5 @@
 import React from "react";
-import { OpenVidu } from "openvidu-browser";
+import { LocalRecorder, OpenVidu } from "openvidu-browser";
 import { useEffect } from "react";
 
 export default VideoRoomComponent = () => {
@@ -25,6 +25,7 @@ export default VideoRoomComponent = () => {
   const [localUser, setLocalUser] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
   const [token, setToken] = useState(undefined);
+  const [connectError, setConnectError] = useState("");
   // const [chatDisplay, setChatDisplay] = useState("none"); not video/audio reqs
   // STATE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -43,4 +44,119 @@ export default VideoRoomComponent = () => {
       animate: true, // Whether you want to animate the transitions
     };
 
+    // CHANGE DOCUMENT.getelementbyid
+    this.layout.initLayoutContainer(
+      document.getElementById("layout"),
+      openViduLayoutOptions
+    );
+
+    window.addEventListener("beforeunload", this.onbeforeunload);
+    window.addEventListener("resize", this.updateLayout);
+    window.addEventListener("resize", this.checkSize);
+
+    return () => {
+      window.removeEventListener("beforeunload", this.onbeforeunload);
+      window.removeEventListener("resize", this.updateLayout);
+      window.removeEventListener("resize", this.checkSize);
+    };
+  }, []);
+
+  onbeforeunload = (event) => {
+    this.leaveSession();
+  };
+
+  joinSession = () => {
+    this.OV = new OpenVidu();
+    this.setState(
+      {
+        session: this.OV.initSession(),
+      },
+      () => {
+        this.subscribeToStreamCreated();
+        this.connectToSession();
+      }
+    );
+  };
+
+  connectToSession = () => {
+    if (token !== undefined) {
+      console.log("token received: ", token);
+      connect(token); // v. this.connect()
+    } else {
+      getToken()
+        .then((token) => {
+          console.log(token);
+          connect(token);
+        })
+        .catch((error) => {
+          if (error) {
+            setConnectError(
+              error.error + error.message + error.code + error.status
+            );
+          }
+          console.log(
+            "There was an error getting the token:",
+            error.code,
+            error.message
+          );
+          alert("There was an error getting the token:", error.message);
+        }); // v. this.getToken()
+    }
+  };
+
+  connect = (token) => {
+    session
+      .connect(token, {
+        clientData: myUserName,
+      })
+      .then(() => {
+        connectWebCam();
+      })
+      .catch((error) => {
+        if (connectError) {
+          setConnectError(
+            error.error + error.message + error.code + error.status
+          );
+        }
+        alert("There was an error connecting to the session:", error.message);
+        console.log(
+          "There was an error connecting to the session:",
+          error.code,
+          error.message
+        );
+      });
+  };
+
+  connectWebCam = () => {
+    let publisher = this.OV.initPublisher(undefined, {
+      audioSource: undefined,
+      videoSource: undefined,
+      publishAudio: localUser.isAudioActive(),
+      publishVideo: localUser.isVideoActive(),
+      resolution: "640x480",
+      frameRate: 30,
+      insertMode: "APPEND",
+    });
+
+    // HMMMMM????????????????????????????????????????????
+    if (session.capabilities.publish) {
+      session.publish(publisher).then(() => {
+        if (joinSession()) {
+          joinSession();
+        }
+      });
+    }
+
+    localUser.setNickname(myUserName);
+    localUser.setConnectionId(session.connection.connectionId);
+    localUser.setScreenShareActive(false);
+    localUser.setStreamManager(publisher);
+    subscribeToUserChanged(); // had this.
+    subscribeToStreamDestroyed(); // had this.
+    sendSignalUserChanged({
+      isScreenShareActive: localUser.isScreenShareActive(),
+    }); // had this.
+
+    setLocalUser(localUser);
+  };
 };
