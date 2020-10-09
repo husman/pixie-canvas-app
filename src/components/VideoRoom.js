@@ -5,20 +5,28 @@ import OpenViduLayout from "../layout/openvidu-layout";
 import UserModel from "../models/user-model";
 import ToolbarComponent from "./toolbar/Toolbar";
 
-export default VideoRoom = () => {
+export default VideoRoom = (props) => {
+  const {
+    // openviduServerUrl,
+    // openviduSecret,
+    sessionName,
+    user,
+    token,
+    error,
+    joinSession,
+    leaveSession,
+  } = props;
+
   const layout = new OpenViduLayout();
-
-  /* Server Side Variables */
-  const [openviduServerUrl, setOpenviduServerUrl] = useState(
-    "https://" + window.location.hostname + ":4443"
+  const [openviduServerSecret, setOpenviduServerSecret] = useState(
+    openviduServerSecret ? openviduSeverSecret : "MY_SECRET"
   );
-  const [openviduServerSecret, setOpenviduServerSecret] = useState("MY_SECRET");
-
-  /* Client Variables */
   const [hasBeenUpdated, setHasBeenUpdated] = useState(false);
-  const [sessionName, setSessionName] = useState("SessionA");
+  const [sessionName, setSessionName] = useState(
+    sessionName ? sessionName : "SessionA"
+  );
   const [userName, setUserName] = useState(
-    "OpenVidu_User" + Math.floor(Math.random() * 100)
+    user ? user : "OpenVidu_User" + Math.floor(Math.random() * 100)
   );
   const [mySessionId, setMySessionId] = useState(sessionName);
   const [myUserName, setMyUserName] = useState(userName);
@@ -26,7 +34,6 @@ export default VideoRoom = () => {
   const [localUser, setLocalUser] = useState(new UserModel());
   const [subscribers, setSubscribers] = useState([]);
   const [token, setToken] = useState(undefined);
-  const [connectError, setConnectError] = useState("");
 
   useEffect(() => {
     const openViduLayoutOptions = {
@@ -86,6 +93,23 @@ export default VideoRoom = () => {
     });
   }, [localUser]);
 
+  const getToken = async () => {
+    const meetingUrl = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      (c) => {
+        var r = (Math.random() * 16) | 0,
+          v = c == "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      }
+    );
+
+    // Alternative, mySessionId to create token
+    const data = await fetch(
+      `http://pixie.neetos.com/token?meetingUrl=${meetingUrl}`
+    );
+    setToken(data.token);
+  };
+
   onbeforeunload = (event) => {
     leaveSession();
   };
@@ -106,18 +130,21 @@ export default VideoRoom = () => {
           setToken(token);
           connect(token);
         })
-        .catch((error) => {
+        .catch((e) => {
           if (error) {
-            setConnectError(
-              error.error + error.message + error.code + error.status
-            );
+            error({
+              error: e.error,
+              messgae: e.message,
+              code: e.code,
+              status: e.status,
+            });
           }
           console.log(
             "There was an error getting the token:",
-            error.code,
-            error.message
+            e.code,
+            e.message
           );
-          alert("There was an error getting the token:", error.message);
+          alert("There was an error getting the token:", e.message);
         });
     }
   };
@@ -130,17 +157,20 @@ export default VideoRoom = () => {
       .then(() => {
         connectWebCam();
       })
-      .catch((error) => {
-        if (connectError) {
-          setConnectError(
-            error.error + error.message + error.code + error.status
-          );
+      .catch((e) => {
+        if (error) {
+          error({
+            error: e.error,
+            messgae: e.message,
+            code: e.code,
+            status: e.status,
+          });
         }
-        alert("There was an error connecting to the session:", error.message);
+        alert("There was an error connecting to the session:", e.message);
         console.log(
           "There was an error connecting to the session:",
-          error.code,
-          error.message
+          e.code,
+          e.message
         );
       });
   };
@@ -158,7 +188,7 @@ export default VideoRoom = () => {
 
     if (session.capabilities.publish) {
       session.publish(publisher).then(() => {
-        if (joinSession()) {
+        if (joinSession) {
           joinSession();
         }
       });
