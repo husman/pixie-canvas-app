@@ -335,6 +335,7 @@ export default VideoRoomComponent = () => {
     }
   };
 
+  /*
   screenShare = () => {
     const videoSource =
       navigator.userAgent.indexOf("Firefox") !== -1 ? "window" : "screen";
@@ -382,4 +383,30 @@ export default VideoRoomComponent = () => {
     session.unpublish(localUser.getsTREAMmanager());
     connectWebCam();
   };
+
+  checkSomeoneShareScreen = () => {
+    let isScreenShared;
+    isScreenShared =
+      subscribers.some((user) => user.isScreenShareActive()) ||
+      localUser.isScreenShareActive();
+
+    const openviduLayoutOptions = {
+      maxRatio: 3 / 2,
+      minRatio: 9 / 16,
+      fixedRatio: isScreenShared,
+      bigClass: "OV_big",
+      bigPercentage: 0.8,
+      bigFixedRatio: false,
+      bigMaxRatio: 3 / 2,
+      bigMinRatio: 9 / 16,
+      bigFirst: true,
+      animate: true,
+    };
+    layout.setLayoutOptions(openviduLayoutOptions);
+    updateLayout();
+  };
+  */
+  /**
+   * Omitted Toggle Chat for now
+   */
 };
