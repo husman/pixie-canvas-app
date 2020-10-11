@@ -17,6 +17,7 @@ export default function Toolbar(props) {
   const mySessionId = props.sessionId;
   const localUser = props.user;
 
+  // TO-DO: Translate toolbar functionality
   const micStatusChanged = () => {
     // micStatusChanged();
   };

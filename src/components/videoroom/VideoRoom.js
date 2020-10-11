@@ -42,7 +42,7 @@ export default function VideoRoom(props) {
     };
 
     layout.initLayoutContainer(
-      document.getElementById("layout"),
+      document.getElementById("layout"), // TO-DO: Move to useRef
       openViduLayoutOptions
     );
 
@@ -76,7 +76,7 @@ export default function VideoRoom(props) {
   }, [subscribers]);
 
   useEffect(() => {
-    // Fix publisher callback
+    // TO-DO: Fix publisher callback
     // localUser.getStreamManager().on("streamPlaying", (e) => {
     //   updateLayout();
     //   webcamPublisher.videos[0].video.parentElement.classList.remove(
@@ -276,7 +276,7 @@ export default function VideoRoom(props) {
       data: JSON.stringify(data),
       type: "userChanged",
     };
-
+    // TO-DO: Fix session.signal error
     // await session.signal(signalOptions);
   };
 
