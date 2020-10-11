@@ -25,9 +25,7 @@ export default function VideoRoom(props) {
   const [subscribers, setSubscribers] = useState([]);
   const [webcamPublisher, setWebcamPublisher] = useState();
   // const [token, setToken] = useState();
-  /*   const [openviduServerSecret, setOpenviduServerSecret] = useState(
-    props.openviduServerSecret ? props.openviduSeverSecret : "MY_SECRET"
-  ); */
+  // const [openviduServerSecret, setOpenviduServerSecret] = useState(props.openviduServerSecret ? props.openviduSeverSecret : "MY_SECRET");
 
   useEffect(() => {
     const openViduLayoutOptions = {
@@ -78,7 +76,7 @@ export default function VideoRoom(props) {
   }, [subscribers]);
 
   useEffect(() => {
-    console.log("localuser", localUser.getStreamManager);
+    // Fix publisher callback
     // localUser.getStreamManager().on("streamPlaying", (e) => {
     //   updateLayout();
     //   webcamPublisher.videos[0].video.parentElement.classList.remove(
@@ -96,8 +94,7 @@ export default function VideoRoom(props) {
         return v.toString(16);
       }
     );
-    // const meetingUrl = "SessionA";
-    // Alternative, mySessionId to create token
+
     const data = await fetch(
       `http://pixie.neetos.com/token?meetingUrl=${meetingUrl}`,
       { mode: "no-cors" }
@@ -111,7 +108,6 @@ export default function VideoRoom(props) {
   };
 
   const connect = (myToken) => {
-    console.log("seesss", session.connect);
     session
       .connect(myToken, {
         clientData: myUserName,
@@ -128,7 +124,7 @@ export default function VideoRoom(props) {
             status: e.status,
           });
         }
-        // alert("There was an error connecting to the session:", e.message);
+        alert("There was an error connecting to the session:", e.message);
         console.log(
           "There was an error connecting to the session:",
           e.code,
@@ -159,13 +155,10 @@ export default function VideoRoom(props) {
     localUser.setNickname(myUserName);
     localUser.setConnectionId(session.connection.connectionId);
     localUser.setStreamManager(publisher);
-    console.log("***publishererrrr", publisher);
     subscribeToUserChanged();
     subscribeToStreamDestroyed();
     setWebcamPublisher(publisher);
     setLocalUser(localUser);
-
-    console.log("connected the webby cam ============");
   };
 
   const leaveSession = () => {
@@ -257,7 +250,6 @@ export default function VideoRoom(props) {
       remoteUsers.forEach((user) => {
         if (user.getConnectionId() === event.from.connectionId) {
           const data = JSON.parse(event.data);
-          console.log("EVENT REMOTE: ", event.data);
           if (data.isAudioActive !== undefined) {
             user.setAudioActive(data.isAudioActive);
           }
@@ -284,7 +276,7 @@ export default function VideoRoom(props) {
       data: JSON.stringify(data),
       type: "userChanged",
     };
-    console.log("SIGNAL !!", session.signal);
+
     // await session.signal(signalOptions);
   };
 
