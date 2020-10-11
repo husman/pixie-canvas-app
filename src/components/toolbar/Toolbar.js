@@ -17,22 +17,21 @@ export default function Toolbar(props) {
   const mySessionId = props.sessionId;
   const localUser = props.user;
 
-  // TO-DO: Translate toolbar functionality
   const micStatusChanged = () => {
-    // micStatusChanged();
+    props.micStatusChanged();
   };
 
   const camStatusChanged = () => {
-    // camStatusChanged();
+    props.camStatusChanged();
   };
 
   const toggleFullscreen = () => {
     setFullscreen((prevFullscreen) => !prevFullscreen);
-    // toggleFullscreen();
+    props.toggleFullscreen();
   };
 
   const leaveSession = () => {
-    // leaveSession();
+    props.leaveSession();
   };
 
   return (
