@@ -78,7 +78,7 @@ export default function VideoRoom(props) {
   }, [subscribers]);
 
   useEffect(() => {
-    console.log("localuserrrrr", localUser.getStreamManager);
+    console.log("localuser", localUser.getStreamManager);
     // localUser.getStreamManager().on("streamPlaying", (e) => {
     //   updateLayout();
     //   webcamPublisher.videos[0].video.parentElement.classList.remove(
