@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import "./StreamComponent.css";
 
 export default function OvVideo(props) {
-  let videoRef = useRef();
+  const videoRef = useRef();
 
   useEffect(() => {
     if (props && props.user.streamManager && !!videoRef) {
@@ -18,17 +18,17 @@ export default function OvVideo(props) {
         }
       });
     }
+    if (props && !!videoRef) {
+      props.user.getStreamManager().addVideoElement(videoRef.current);
+    }
   });
 
-  if (props && !!videoRef) {
-    props.user.getStreamManager().addVideoElement(videoRef.current);
-  }
-
+  console.log("FDTMH", props.user);
   return (
     <video
+      ref={videoRef}
       autoPlay={true}
       id={"video-" + props.user.getStreamManager().stream.streamId}
-      ref={videoRef}
       muted={props.mutedSound}
     />
   );

@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import "./StreamComponent.css";
 import OvVideoComponent from "./OvVideo";
 import {
-  AvVideocamOff as VideocamOff,
-  AvMicOff as MicOff,
-  AvVolumeUp as VolumeUp,
-  AvVolumeOff as VolumeOff,
-  ActionHighlightOff as HighlightOff,
-} from "material-ui/svg-icons";
+  VideocamOff,
+  MicOff,
+  VolumeUp,
+  VolumeOff,
+  HighlightOff,
+} from "@material-ui/icons";
 import {
   FormControl,
   Input,
@@ -91,7 +91,6 @@ export default function StreamComponent(props) {
           </div>
         )}
       </div>
-
       {props.user !== undefined &&
       props.user.getStreamManager() !== undefined ? (
         <div className="streamComponent">
