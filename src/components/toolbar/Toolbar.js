@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import "./ToolbarComponent.css";
+import "./Toolbar.css";
 
 import {
-  AvVideocamOff as VideocamOff,
-  AvMicOff as MicOff,
-  AvMic as Mic,
-  AvVideocam as Videocam,
-  NavigationFullscreen as Fullscreen,
-  NavigationFullscreenExit as FullscreenExit,
-  ActionPowerSettingsNew as PowerSettingsNew,
-} from "material-ui/svg-icons";
+  VideocamOff,
+  MicOff,
+  Mic,
+  Videocam,
+  Fullscreen,
+  FullscreenExit,
+  PowerSettingsNew,
+} from "@material-ui/icons";
 import { AppBar, Toolbar as ToolBar, IconButton } from "@material-ui/core";
 
 export default function Toolbar(props) {
@@ -18,20 +18,20 @@ export default function Toolbar(props) {
   const localUser = props.user;
 
   const micStatusChanged = () => {
-    micStatusChanged();
+    // micStatusChanged();
   };
 
   const camStatusChanged = () => {
-    camStatusChanged();
+    // camStatusChanged();
   };
 
   const toggleFullscreen = () => {
     setFullscreen((prevFullscreen) => !prevFullscreen);
-    toggleFullscreen();
+    // toggleFullscreen();
   };
 
   const leaveSession = () => {
-    leaveSession();
+    // leaveSession();
   };
 
   return (
