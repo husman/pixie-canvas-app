@@ -4,21 +4,23 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "material-ui": "^0.20.2",
-    "openvidu-browser": "^2.15.1-beta2",
+    "jquery": "^3.5.1",
+    "openvidu-browser": "^2.15.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-impressjs": "^1.1.0",
     "react-scripts": "3.4.3"
   },
   "scripts": {
-    "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build:pixie-canvas": "npm install --prefix ../library/ && node library-copy.js && cd ../library && npm run create-library",
+    "eject": "react-scripts eject",
+    "start": "react-scripts start",
+    "test": "react-scripts test --env=jsdom"
   },
   "eslintConfig": {
     "extends": "react-app"
