@@ -61,7 +61,7 @@ export default function VideoRoom(props) {
   useEffect(() => {
     subscribeToStreamCreated();
     // connectToSession();
-    connect(getToken());
+    connect();
   }, [session]);
 
   useEffect(() => {
@@ -95,19 +95,30 @@ export default function VideoRoom(props) {
       }
     );
 
-    const data = await fetch(
-      `http://pixie.neetos.com/token?meetingUrl=${meetingUrl}`,
-      { mode: "no-cors" }
-    );
 
-    return data.token;
+    const host = process.env.NODE_ENV && false === 'development' ? 'http://localhost:4000' : 'http://pixie.neetos.com';
+
+    try {
+      const response = await fetch(
+        `${host}/token?meetingUrl=${meetingUrl}`,
+      );
+
+      const { token } = await response.json();
+      console.log('token', token);
+
+      return token;
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   onbeforeunload = (event) => {
     leaveSession();
   };
 
-  const connect = (myToken) => {
+  const connect = async () => {
+    const myToken = await getToken();
+
     session
       .connect(myToken, {
         clientData: myUserName,
