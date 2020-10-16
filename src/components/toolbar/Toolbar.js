@@ -14,8 +14,14 @@ import { AppBar, Toolbar as ToolBar, IconButton } from "@material-ui/core";
 
 export default function Toolbar(props) {
   const [fullscreen, setFullscreen] = useState(false);
-  const mySessionId = props.sessionId;
-  const localUser = props.user;
+  // const mySessionId = props.sessionId;
+  // const localUser = props.user;
+  const {
+    sessionId: mySessionId,
+    user: localUser,
+    isMicOn,
+    isCameraOn,
+  } = props;
 
   const micStatusChanged = () => {
     props.micStatusChanged();
@@ -37,13 +43,8 @@ export default function Toolbar(props) {
   return (
     <AppBar className="toolbar" id="header">
       <ToolBar className="toolbar">
-        <div id="navSessionInfo">
-          {mySessionId && (
-            <div id="titleContent">
-              <span id="session-title">{mySessionId}</span>
-            </div>
-          )}
-        </div>
+        {mySessionId && <h3 id="session-title">{mySessionId}</h3>}
+
         <div className="buttonsContent">
           <IconButton
             color="inherit"
@@ -51,11 +52,7 @@ export default function Toolbar(props) {
             id="navMicButton"
             onClick={micStatusChanged}
           >
-            {localUser !== undefined && localUser.isAudioActive() ? (
-              <Mic />
-            ) : (
-              <MicOff color="secondary" />
-            )}
+            {isMicOn ? <Mic /> : <MicOff color="secondary" />}
           </IconButton>
 
           <IconButton
@@ -64,12 +61,9 @@ export default function Toolbar(props) {
             id="navCamButton"
             onClick={camStatusChanged}
           >
-            {localUser !== undefined && localUser.isVideoActive() ? (
-              <Videocam />
-            ) : (
-              <VideocamOff color="secondary" />
-            )}
+            {isCameraOn ? <Videocam /> : <VideocamOff color="secondary" />}
           </IconButton>
+
           <IconButton
             color="inherit"
             className="navButton"
@@ -81,6 +75,7 @@ export default function Toolbar(props) {
               <Fullscreen />
             )}
           </IconButton>
+
           <IconButton
             color="secondary"
             className="navButton"
