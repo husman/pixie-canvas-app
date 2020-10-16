@@ -290,10 +290,10 @@ class OpenViduLayout {
       return;
     }
     let id = this.layoutContainer.id;
-    if (!id) {
-      id = "OT_" + this.cheapUUID();
-      this.layoutContainer.id = id;
-    }
+    // if (!id) {
+    //   id = "OT_" + this.cheapUUID();
+    //   this.layoutContainer.id = id;
+    // }
 
     const HEIGHT =
       this.getHeight(this.layoutContainer) -
