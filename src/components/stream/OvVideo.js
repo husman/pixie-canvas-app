@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import "./StreamComponent.css";
+import "./Stream.css";
 
 export default function OvVideo({ user, mutedSound }) {
   const videoRef = useRef();

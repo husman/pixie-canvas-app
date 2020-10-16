@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "./StreamComponent.css";
-import OvVideoComponent from "./OvVideo";
+import "./Stream.css";
+import OvVideo from "./OvVideo";
 import { VideocamOff, MicOff, VolumeUp, VolumeOff } from "@material-ui/icons";
 import { IconButton } from "@material-ui/core";
 
@@ -14,7 +14,7 @@ export default function StreamComponent({ user, isMicOn, isCameraOn }) {
   return (
     <div className="OT_widget-container">
       <div className="streamComponent">
-        <OvVideoComponent user={user} mutedSound={mutedSound} />
+        <OvVideo user={user} mutedSound={mutedSound} />
 
         <div id="statusIcons">
           {!isCameraOn && (

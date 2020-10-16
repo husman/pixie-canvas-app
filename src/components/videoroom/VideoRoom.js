@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { OpenVidu } from "openvidu-browser";
-import StreamComponent from "../stream/StreamComponent";
+import StreamComponent from "../stream/Stream";
 import ToolbarComponent from "../toolbar/Toolbar";
 import UserModel from "../../models/UserModels";
 
@@ -165,7 +165,7 @@ export default function VideoRoom(props) {
     try {
       /* **Important**
       Need a check for if the camera/mic is on, this promise doesn't seem to resolve when camera & mic permissions are blocked */
-      // await session.current.publish(publisher);
+      await session.current.publish(publisher);
     } catch (e) {
       throw e;
     }
