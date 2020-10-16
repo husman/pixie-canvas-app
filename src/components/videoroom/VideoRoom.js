@@ -1,215 +1,188 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { OpenVidu } from "openvidu-browser";
 import StreamComponent from "../stream/StreamComponent";
 import ToolbarComponent from "../toolbar/Toolbar";
-import OpenViduLayout from "../../layout/openvidu-layout";
 import UserModel from "../../models/UserModels";
 
-var localUser = new UserModel();
-
 export default function VideoRoom(props) {
-  const { sessionName, error } = props;
-  const OV = new OpenVidu();
-  const layout = new OpenViduLayout();
-
-  /* States */
-  const [hasBeenUpdated, setHasBeenUpdated] = useState(false);
-  const [mySessionId, setMySessionId] = useState(
-    sessionName ? sessionName : "SessionA"
-  );
-  const [myUserName, setMyUserName] = useState(
-    "OpenVidu_User" + Math.floor(Math.random() * 100)
-  );
-  const [session, setSession] = useState(OV.initSession());
+  let OV = useRef(new OpenVidu());
+  const [mySessionId, setMySessionId] = useState("SessionA");
   const [localUser, setLocalUser] = useState(new UserModel());
+  const [isMicOn, setIsMicOn] = useState(false);
+  const [isCameraOn, setIsCameraOn] = useState(false);
   const [subscribers, setSubscribers] = useState([]);
-  const [webcamPublisher, setWebcamPublisher] = useState();
-  // const [token, setToken] = useState();
-  // const [openviduServerSecret, setOpenviduServerSecret] = useState(props.openviduServerSecret ? props.openviduSeverSecret : "MY_SECRET");
+  const [publisher, setPublisher] = useState(
+    OV.current.initPublisher(undefined, {
+      audioSource: undefined,
+      videoSource: undefined,
+      publishAudio: isMicOn,
+      publishVideo: isCameraOn,
+      resolution: "640x480",
+      frameRate: 30,
+      insertMode: "REPLACE",
+    })
+  );
+  const [showVideoContainer, setShowVideoContainer] = useState(false);
+  const myUserName = useRef("OpenVidu_User" + Math.floor(Math.random() * 100));
+  const videoContainerRef = useRef();
+  const mainContainerRef = useRef();
+  const session = useRef(OV.current.initSession());
+
+  const init = async () => {
+    setIsMicOn(localUser.isAudioActive());
+    setIsCameraOn(localUser.isVideoActive());
+
+    session.current
+      .on("streamCreated", handleSessionStreamCreated)
+      .on("signal:userChanged", handleSessionSignalUserChanged)
+      .on("streamDestroyed", handleSessionStreamDestroy);
+
+    await connect();
+
+    setShowVideoContainer(true);
+  };
 
   useEffect(() => {
-    const openViduLayoutOptions = {
-      maxRatio: 3 / 2,
-      minRatio: 9 / 16,
-      fixedRatio: false,
-      bigClass: "OV_big",
-      bigPercentage: 0.8,
-      bigFixedRatio: false,
-      bigMaxRatio: 3 / 2,
-      bigMinRatio: 9 / 16,
-      bigFirst: true,
-      animate: true,
-    };
+    init();
 
-    layout.initLayoutContainer(
-      document.getElementById("layout"), // TO-DO: Move to useRef
-      openViduLayoutOptions
-    );
-
-    window.addEventListener("beforeunload", onbeforeunload);
-    window.addEventListener("resize", updateLayout);
-    window.addEventListener("resize", checkSize);
-    // joinSession();
-
+    window.addEventListener("beforeunload", leaveSession);
     return () => {
-      window.removeEventListener("beforeunload", onbeforeunload);
-      window.removeEventListener("resize", updateLayout);
-      window.removeEventListener("resize", checkSize);
+      window.removeEventListener("beforeunload", leaveSession);
     };
   }, []);
 
   useEffect(() => {
-    subscribeToStreamCreated();
-    // connectToSession();
-    connect();
-  }, [session]);
+    if (localUser.connectionId.length) {
+      connectWebCam();
+    }
+  }, [localUser, subscribers]);
 
   useEffect(() => {
-    if (localUser) {
+    if (localUser.connectionId.length) {
+      setLocalUser((prevLocalUser) => {
+        prevLocalUser.setVideoActive(isCameraOn);
+        prevLocalUser.setAudioActive(isMicOn);
+        return prevLocalUser;
+      });
+
+      localUser.streamManager.publishAudio(isMicOn);
+      localUser.streamManager.publishVideo(isCameraOn);
       sendSignalUserChanged({
-        isAudioActive: localUser.isAudioActive(),
-        isVideoActive: localUser.isVideoActive(),
-        nickname: localUser.getNickname(),
+        isAudioActive: isMicOn,
+        isVideoActive: isCameraOn,
       });
     }
-    updateLayout();
-  }, [subscribers]);
+  }, [isCameraOn, isMicOn]);
 
-  useEffect(() => {
-    // TO-DO: Fix publisher callback
-    // localUser.getStreamManager().on("streamPlaying", (e) => {
-    //   updateLayout();
-    //   webcamPublisher.videos[0].video.parentElement.classList.remove(
-    //     "custom-class"
-    //   );
-    // });
-  }, [localUser, webcamPublisher]);
+  const handleSessionStreamCreated = ({ stream }) => {
+    const subscriber = session.current.subscribe(stream, undefined);
+    const newUser = new UserModel();
 
-  const getToken = async () => {
+    newUser.setStreamManager(subscriber);
+    newUser.setConnectionId(stream.connection.connectionId);
+    newUser.setType("remote");
+
+    setSubscribers((prevSubscribers) => [...prevSubscribers, newUser]);
+  };
+  const handleSessionSignalUserChanged = (event) => {
+    setSubscribers((prevSubscribers) => {
+      prevSubscribers.forEach((subscriber) => {
+        if (subscriber.getConnectionId() === event.from.connectionId) {
+          const data = JSON.parse(event.data);
+
+          if (data.isAudioActive !== subscriber.getAudioActive()) {
+            subscriber.setAudioActive(data.isAudioActive);
+          }
+          if (data.isVideoActive !== subscriber.getVideoActive()) {
+            subscriber.setVideoActive(data.isVideoActive);
+          }
+        }
+      });
+      return prevSubscribers;
+    });
+  };
+  const handleSessionStreamDestroy = (event) => {
+    deleteSubscriber(event.stream);
+    event.preventDefault();
+  };
+
+  const generateRandomUrl = () => {
     const meetingUrl = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
       /[xy]/g,
       (c) => {
         var r = (Math.random() * 16) | 0,
-          v = c == "x" ? r : (r & 0x3) | 0x8;
+          v = c === "x" ? r : (r & 0x3) | 0x8;
         return v.toString(16);
       }
     );
-
-
-    const host = process.env.NODE_ENV && false === 'development' ? 'http://localhost:4000' : 'http://pixie.neetos.com';
-
-    try {
-      const response = await fetch(
-        `${host}/token?meetingUrl=${meetingUrl}`,
-      );
-
-      const { token } = await response.json();
-      console.log('token', token);
-
-      return token;
-    } catch (err) {
-      console.error(err);
-    }
+    return meetingUrl;
   };
 
-  onbeforeunload = (event) => {
-    leaveSession();
+  const getToken = async () => {
+    const meetingUrl = generateRandomUrl();
+
+    const host =
+      process.env.NODE_ENV && false === "development"
+        ? "http://localhost:4000"
+        : "http://pixie.neetos.com";
+
+    try {
+      const response = await fetch(`${host}/token?meetingUrl=${meetingUrl}`);
+      const { token } = await response.json();
+      return token;
+    } catch (e) {
+      throw e;
+    }
   };
 
   const connect = async () => {
     const myToken = await getToken();
-
-    session
-      .connect(myToken, {
-        clientData: myUserName,
-      })
-      .then(() => {
-        connectWebCam();
-      })
-      .catch((e) => {
-        if (error) {
-          error({
-            error: e.error,
-            messgae: e.message,
-            code: e.code,
-            status: e.status,
-          });
-        }
-        alert("There was an error connecting to the session:", e.message);
-        console.log(
-          "There was an error connecting to the session:",
-          e.code,
-          e.message
-        );
+    try {
+      await session.current.connect(myToken, {
+        clientData: myUserName.current,
       });
+      await connectWebCam();
+    } catch (e) {
+      alert("There was an error connecting to the session:", e.message);
+      throw e;
+    }
   };
 
-  const connectWebCam = () => {
-    let publisher = OV.initPublisher(undefined, {
-      audioSource: undefined,
-      videoSource: undefined,
-      publishAudio: localUser.isAudioActive(),
-      publishVideo: localUser.isVideoActive(),
-      resolution: "640x480",
-      frameRate: 30,
-      insertMode: "APPEND",
+  const connectWebCam = async () => {
+    session.current.unpublish(publisher);
+    setPublisher(
+      OV.current.initPublisher(undefined, {
+        audioSource: undefined,
+        videoSource: undefined,
+        publishAudio: isMicOn,
+        publishVideo: isCameraOn,
+        resolution: "640x480",
+        frameRate: 30,
+        insertMode: "REPLACE",
+      })
+    );
+
+    try {
+      /* **Important**
+      Need a check for if the camera/mic is on, this promise doesn't seem to resolve when camera & mic permissions are blocked */
+      // await session.current.publish(publisher);
+    } catch (e) {
+      throw e;
+    }
+
+    setLocalUser((prevLocalUser) => {
+      prevLocalUser.setConnectionId(session.current.connection.connectionId);
+      prevLocalUser.setStreamManager(publisher);
+      return prevLocalUser;
     });
-
-    if (session.capabilities.publish) {
-      session.publish(publisher).then(() => {
-        if (props.joinSession) {
-          props.joinSession();
-        }
-      });
-    }
-
-    localUser.setNickname(myUserName);
-    localUser.setConnectionId(session.connection.connectionId);
-    localUser.setStreamManager(publisher);
-    subscribeToUserChanged();
-    subscribeToStreamDestroyed();
-    setWebcamPublisher(publisher);
-    setLocalUser(localUser);
   };
 
-  const leaveSession = () => {
-    const mySession = session;
-    if (mySession) {
-      mySession.disconnect();
-    }
-
-    // Clear Properties
-    OV = null;
-    setSession(undefined);
-    setSubscribers([]);
-    setMySessionId("SessionA");
-    setMyUserName("OpenVidu_User" + Math.floor(Math.random() * 100));
-    setLocalUser(undefined);
-
-    if (props.leaveSession) {
-      props.leaveSession();
-    }
-  };
-
-  const camStatusChanged = () => {
-    localUser.setVideoActive(!localUser.isVideoActive());
-    localUser.getStreamManager().publishVideo(localUser.isVideoActive());
-    sendSignalUserChanged({ isVideoActive: localUser.isVideoActive() });
-    setLocalUser(localUser);
-  };
-
-  const micStatusChanged = () => {
-    localUser.setAudioActive(!localUser.isAudioActive());
-    localUser.getStreamManager().publishAudio(localUser.isAudioActive());
-    sendSignalUserChanged({ isAudioActive: localUser.isAudioActive() });
-    setLocalUser(localUser);
-  };
-
-  const nicknameChanged = (nickname) => {
-    let myLocalUser = localUser;
-    myLocalUser.setNickname(nickname);
-    setLocalUser(myLocalUser);
-    sendSignalUserChanged({ nickname: myLocalUser.getNickname() });
+  const sendSignalUserChanged = async (data) => {
+    const signalOptions = {
+      data: JSON.stringify(data),
+      type: "userChanged",
+    };
+    await session.current.signal(signalOptions);
   };
 
   const deleteSubscriber = (stream) => {
@@ -224,90 +197,22 @@ export default function VideoRoom(props) {
     }
   };
 
-  const subscribeToStreamCreated = () => {
-    session.on("streamCreated", (event) => {
-      const subscriber = session.subscribe(event.stream, undefined);
-      const mySubscribers = subscribers;
-      subscriber.on("streamPlaying", (e) => {
-        subscriber.videos[0].video.parentElement.classList.remove(
-          "custom-class"
-        );
-      });
-      const newUser = new UserModel();
-      newUser.setStreamManager(subscriber);
-      newUser.setConnectionId(event.stream.connection.connectionId);
-      newUser.setType("remote");
-      const nickname = event.stream.connection.data.split("%")[0];
-      newUser.setNickname(JSON.parse(nickname).clientData);
-      mySubscribers.push(newUser);
-      setSubscribers(mySubscribers);
-    });
-  };
-
-  const subscribeToStreamDestroyed = () => {
-    // On every Stream destroyed...
-    session.on("streamDestroyed", (event) => {
-      // Remove the stream from 'subscribers' array
-      deleteSubscriber(event.stream);
-      event.preventDefault();
-      updateLayout();
-    });
-  };
-
-  const subscribeToUserChanged = () => {
-    session.on("signal:userChanged", (event) => {
-      let remoteUsers = subscribers;
-
-      remoteUsers.forEach((user) => {
-        if (user.getConnectionId() === event.from.connectionId) {
-          const data = JSON.parse(event.data);
-          if (data.isAudioActive !== undefined) {
-            user.setAudioActive(data.isAudioActive);
-          }
-          if (data.isVideoActive !== undefined) {
-            user.setVideoActive(data.isVideoActive);
-          }
-          if (data.nickname !== undefined) {
-            user.setNickname(data.nickname);
-          }
-        }
-      });
-      setSubscribers(remoteUsers);
-    });
-  };
-
-  const updateLayout = () => {
-    setTimeout(() => {
-      layout.updateLayout();
-    }, 20);
-  };
-
-  const sendSignalUserChanged = async (data) => {
-    const signalOptions = {
-      data: JSON.stringify(data),
-      type: "userChanged",
-    };
-    // TO-DO: Fix session.signal error
-    // await session.signal(signalOptions);
-  };
-
   const toggleFullscreen = () => {
     const document = window.document;
-    const fs = document.getElementById("container");
     if (
       !document.fullscreenElement &&
       !document.mozFullScreenElement &&
       !document.webkitFullscreenElement &&
       !document.msFullscreenElement
     ) {
-      if (fs.requestFullscreen) {
-        fs.requestFullscreen();
-      } else if (fs.msRequestFullscreen) {
-        fs.msRequestFullscreen();
-      } else if (fs.mozRequestFullScreen) {
-        fs.mozRequestFullScreen();
-      } else if (fs.webkitRequestFullscreen) {
-        fs.webkitRequestFullscreen();
+      if (mainContainerRef.current.requestFullscreen) {
+        mainContainerRef.current.requestFullscreen();
+      } else if (mainContainerRef.current.msRequestFullscreen) {
+        mainContainerRef.current.msRequestFullscreen();
+      } else if (mainContainerRef.current.mozRequestFullScreen) {
+        mainContainerRef.current.mozRequestFullScreen();
+      } else if (mainContainerRef.current.webkitRequestFullscreen) {
+        mainContainerRef.current.webkitRequestFullscreen();
       }
     } else {
       if (document.exitFullscreen) {
@@ -322,20 +227,26 @@ export default function VideoRoom(props) {
     }
   };
 
-  const checkSize = () => {
-    if (
-      document.getElementById("layout").offsetWidth <= 700 &&
-      !hasBeenUpdated
-    ) {
-      setHasBeenUpdated(true);
-    }
-    if (document.getElementById("layout").offsetWidth > 700 && hasBeenUpdated) {
-      setHasBeenUpdated(false);
-    }
+  const camStatusChanged = () => {
+    setIsCameraOn((prev) => !prev);
+  };
+
+  const micStatusChanged = () => {
+    setIsMicOn((prev) => !prev);
+  };
+
+  const leaveSession = () => {
+    session && session.current.disconnect();
+    // Clear Properties
+    OV.current = null;
+    session.current = undefined;
+    setSubscribers([]);
+    setMySessionId("SessionA");
+    setLocalUser(undefined);
   };
 
   return (
-    <div className="container" id="container">
+    <div className="container" id="main-container" ref={mainContainerRef}>
       <ToolbarComponent
         sessionId={mySessionId}
         user={localUser}
@@ -343,29 +254,32 @@ export default function VideoRoom(props) {
         micStatusChanged={micStatusChanged}
         toggleFullscreen={toggleFullscreen}
         leaveSession={leaveSession}
+        isMicOn={isMicOn}
+        isCameraOn={isCameraOn}
       />
-      <div id="layout" className="bounds">
-        {localUser !== undefined && localUser.getStreamManager() !== undefined && (
+      {showVideoContainer && (
+        <div id="video-container" className="bounds" ref={videoContainerRef}>
           <div className="OT_root OT_publisher custom-class" id="localUser">
             <StreamComponent
               user={localUser}
-              handleNickname={nicknameChanged}
+              isMicOn={isMicOn}
+              isCameraOn={isCameraOn}
             />
           </div>
-        )}
-        {subscribers.map((sub, i) => (
-          <div
-            key={i}
-            className="OT_root OT_publisher custom-class"
-            id="remoteUsers"
-          >
-            <StreamComponent
-              user={sub}
-              streamId={sub.streamManager.stream.streamId}
-            />
-          </div>
-        ))}
-      </div>
+          {subscribers.map((sub, i) => (
+            <div
+              key={i}
+              className="OT_root OT_publisher custom-class"
+              id="remoteUsers"
+            >
+              <StreamComponent
+                user={sub}
+                streamId={sub.streamManager.stream.streamId}
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
