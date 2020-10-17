@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./Toolbar.css";
 
 import {
   VideocamOff,

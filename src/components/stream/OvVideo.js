@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import "./Stream.css";
 
 export default function OvVideo({ user, mutedSound }) {
   const videoRef = useRef();
@@ -7,9 +6,6 @@ export default function OvVideo({ user, mutedSound }) {
   useEffect(() => {
     if (stream && !!videoRef) {
       stream.addVideoElement(videoRef.current);
-
-      console.log("STREAM ADD VIDE EL===============", user.streamManager);
-
       if (user.streamManager.session) {
         user.streamManager.session.on("signal:userChanged", (event) => {
           const data = JSON.parse(event.data);

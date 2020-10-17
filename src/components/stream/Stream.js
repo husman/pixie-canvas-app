@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./Stream.css";
 import OvVideo from "./OvVideo";
 import { VideocamOff, MicOff, VolumeUp, VolumeOff } from "@material-ui/icons";
 import { IconButton } from "@material-ui/core";
@@ -12,30 +11,20 @@ export default function StreamComponent({ user, isMicOn, isCameraOn }) {
   };
 
   return (
-    <div className="OT_widget-container">
-      <div className="streamComponent">
-        <OvVideo user={user} mutedSound={mutedSound} />
+    <div className="streamComponent">
+      <OvVideo user={user} mutedSound={mutedSound} />
 
-        <div id="statusIcons">
-          {!isCameraOn && (
-            <div id="camIcon">
-              <VideocamOff id="statusCam" />
-            </div>
-          )}
+      <div id="statusIcons">
+        {!isCameraOn && <VideocamOff id="statusCam" />}
+        {!isMicOn && <MicOff id="statusMic" />}
+      </div>
 
-          {!isMicOn && (
-            <div id="micIcon">
-              <MicOff id="statusMic" />
-            </div>
-          )}
-        </div>
-        <div className="volume-btn-container">
-          {!user.isLocal() && (
-            <IconButton id="volumeButton" onClick={toggleSound}>
-              {mutedSound ? <VolumeOff color="secondary" /> : <VolumeUp />}
-            </IconButton>
-          )}
-        </div>
+      <div className="volume-btn-container">
+        {!user.isLocal() && (
+          <IconButton id="volumeButton" onClick={toggleSound}>
+            {mutedSound ? <VolumeOff color="secondary" /> : <VolumeUp />}
+          </IconButton>
+        )}
       </div>
     </div>
   );
