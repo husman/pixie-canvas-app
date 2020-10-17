@@ -1,3 +1,3 @@
-import VideoRoomComponent from "./components/VideoRoom";
+import VideoRoomComponent from "./components/videoroom/VideoRoom";
 
 export default VideoRoomComponent;
