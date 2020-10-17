@@ -14,22 +14,24 @@ export default function VideoRoom(props) {
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [subscribers, setSubscribers] = useState([]);
   const [publisher, setPublisher] = useState(
-    OV.current.initPublisher(undefined, {
-      audioSource: undefined,
-      videoSource: undefined,
-      publishAudio: isMicOn,
-      publishVideo: isCameraOn,
-      resolution: "640x480",
-      frameRate: 30,
-      insertMode: "REPLACE",
-    })
+    OV.current &&
+      OV.current.initPublisher(undefined, {
+        audioSource: undefined,
+        videoSource: undefined,
+        publishAudio: isMicOn,
+        publishVideo: isCameraOn,
+        resolution: "640x480",
+        frameRate: 30,
+        insertMode: "REPLACE",
+      })
   );
   const [showVideoContainer, setShowVideoContainer] = useState(false);
   const myUserName = useRef("OpenVidu_User" + Math.floor(Math.random() * 100));
   const videoContainerRef = useRef();
   const mainContainerRef = useRef();
-  const session = useRef(OV.current.initSession());
+  const session = useRef(OV.current && OV.current.initSession());
 
+  /* Initialize Video/Audio Session */
   const init = async () => {
     setIsMicOn(localUser.isAudioActive());
     setIsCameraOn(localUser.isVideoActive());
@@ -40,7 +42,6 @@ export default function VideoRoom(props) {
       .on("streamDestroyed", handleSessionStreamDestroy);
 
     await connect();
-
     setShowVideoContainer(true);
   };
 
@@ -53,12 +54,14 @@ export default function VideoRoom(props) {
     };
   }, []);
 
+  /* Connect User & Sunscribers to Webcam */
   useEffect(() => {
     if (localUser && localUser.connectionId.length) {
       connectWebCam();
     }
   }, [localUser, subscribers]);
 
+  /* Audio/Video Toggle */
   useEffect(() => {
     if (localUser.connectionId.length) {
       setLocalUser((prevLocalUser) => {
@@ -76,6 +79,7 @@ export default function VideoRoom(props) {
     }
   }, [isCameraOn, isMicOn]);
 
+  /* Handle subscribers */
   const handleSessionStreamCreated = ({ stream }) => {
     const subscriber = session.current.subscribe(stream, undefined);
     const newUser = new UserModel();
@@ -86,6 +90,8 @@ export default function VideoRoom(props) {
 
     setSubscribers((prevSubscribers) => [...prevSubscribers, newUser]);
   };
+
+  /* Handle Audio/Video Toggle */
   const handleSessionSignalUserChanged = (event) => {
     setSubscribers((prevSubscribers) => {
       prevSubscribers.forEach((subscriber) => {
@@ -103,11 +109,14 @@ export default function VideoRoom(props) {
       return prevSubscribers;
     });
   };
+
+  /* Destroy Stream */
   const handleSessionStreamDestroy = (event) => {
     deleteSubscriber(event.stream);
     event.preventDefault();
   };
 
+  /* Get session token */
   const getToken = async () => {
     const meetingUrl = uuidv4();
 
@@ -125,6 +134,7 @@ export default function VideoRoom(props) {
     }
   };
 
+  /* Connect to session */
   const connect = async () => {
     const myToken = await getToken();
     try {
@@ -138,6 +148,7 @@ export default function VideoRoom(props) {
     }
   };
 
+  /* Publish Video/Audio to session */
   const connectWebCam = async () => {
     session.current.unpublish(publisher);
     setPublisher(
@@ -167,6 +178,7 @@ export default function VideoRoom(props) {
     });
   };
 
+  /* Update session signal */
   const sendSignalUserChanged = async (data) => {
     const signalOptions = {
       data: JSON.stringify(data),
@@ -175,6 +187,7 @@ export default function VideoRoom(props) {
     await session.current.signal(signalOptions);
   };
 
+  /* Remove Subscriber from stream */
   const deleteSubscriber = (stream) => {
     const remoteUsers = subscribers;
     const userStream = remoteUsers.filter(
@@ -187,6 +200,7 @@ export default function VideoRoom(props) {
     }
   };
 
+  /* Toggle Fullscreen (Need to determine aspect ratio) */
   const toggleFullscreen = () => {
     const document = window.document;
     if (
@@ -225,11 +239,12 @@ export default function VideoRoom(props) {
     setIsMicOn((prev) => !prev);
   };
 
+  /* Leave session */
   const leaveSession = () => {
     session && session.current.disconnect();
     // Clear Properties
-    // OV.current = null;
-    // session.current = undefined;
+    OV.current = null;
+    session.current = undefined;
     setSubscribers([]);
     setMySessionId("SessionA");
     setLocalUser(undefined);
