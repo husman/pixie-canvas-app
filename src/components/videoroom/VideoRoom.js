@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { OpenVidu } from "openvidu-browser";
+import { v4 as uuidv4 } from "uuid";
 import StreamComponent from "../stream/Stream";
 import ToolbarComponent from "../toolbar/Toolbar";
 import UserModel from "../../models/UserModels";
+import "./VideoRoom.css";
 
 export default function VideoRoom(props) {
   let OV = useRef(new OpenVidu());
@@ -52,7 +54,7 @@ export default function VideoRoom(props) {
   }, []);
 
   useEffect(() => {
-    if (localUser.connectionId.length) {
+    if (localUser && localUser.connectionId.length) {
       connectWebCam();
     }
   }, [localUser, subscribers]);
@@ -106,20 +108,8 @@ export default function VideoRoom(props) {
     event.preventDefault();
   };
 
-  const generateRandomUrl = () => {
-    const meetingUrl = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-      /[xy]/g,
-      (c) => {
-        var r = (Math.random() * 16) | 0,
-          v = c === "x" ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      }
-    );
-    return meetingUrl;
-  };
-
   const getToken = async () => {
-    const meetingUrl = generateRandomUrl();
+    const meetingUrl = uuidv4();
 
     const host =
       process.env.NODE_ENV && false === "development"
@@ -238,8 +228,8 @@ export default function VideoRoom(props) {
   const leaveSession = () => {
     session && session.current.disconnect();
     // Clear Properties
-    OV.current = null;
-    session.current = undefined;
+    // OV.current = null;
+    // session.current = undefined;
     setSubscribers([]);
     setMySessionId("SessionA");
     setLocalUser(undefined);
@@ -247,38 +237,42 @@ export default function VideoRoom(props) {
 
   return (
     <div className="container" id="main-container" ref={mainContainerRef}>
-      <ToolbarComponent
-        sessionId={mySessionId}
-        user={localUser}
-        camStatusChanged={camStatusChanged}
-        micStatusChanged={micStatusChanged}
-        toggleFullscreen={toggleFullscreen}
-        leaveSession={leaveSession}
-        isMicOn={isMicOn}
-        isCameraOn={isCameraOn}
-      />
-      {showVideoContainer && (
-        <div id="video-container" className="bounds" ref={videoContainerRef}>
-          <div className="OT_root OT_publisher custom-class" id="localUser">
-            <StreamComponent
-              user={localUser}
-              isMicOn={isMicOn}
-              isCameraOn={isCameraOn}
-            />
-          </div>
-          {subscribers.map((sub, i) => (
+      {localUser && (
+        <>
+          <ToolbarComponent
+            sessionId={mySessionId}
+            user={localUser}
+            camStatusChanged={camStatusChanged}
+            micStatusChanged={micStatusChanged}
+            toggleFullscreen={toggleFullscreen}
+            leaveSession={leaveSession}
+            isMicOn={isMicOn}
+            isCameraOn={isCameraOn}
+          />
+          {showVideoContainer && (
             <div
-              key={i}
-              className="OT_root OT_publisher custom-class"
-              id="remoteUsers"
+              id="video-container"
+              className="bounds"
+              ref={videoContainerRef}
             >
-              <StreamComponent
-                user={sub}
-                streamId={sub.streamManager.stream.streamId}
-              />
+              <div className="publisher" id="localUser">
+                <StreamComponent
+                  user={localUser}
+                  isMicOn={isMicOn}
+                  isCameraOn={isCameraOn}
+                />
+              </div>
+              {subscribers.map((sub, i) => (
+                <div key={i} className="subscribers" id="remoteUsers">
+                  <StreamComponent
+                    user={sub}
+                    streamId={sub.streamManager.stream.streamId}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );
