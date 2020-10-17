@@ -13,8 +13,6 @@ import { AppBar, Toolbar as ToolBar, IconButton } from "@material-ui/core";
 
 export default function Toolbar(props) {
   const [fullscreen, setFullscreen] = useState(false);
-  // const mySessionId = props.sessionId;
-  // const localUser = props.user;
   const {
     sessionId: mySessionId,
     user: localUser,
