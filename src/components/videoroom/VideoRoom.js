@@ -8,7 +8,7 @@ import "./VideoRoom.css";
 
 export default function VideoRoom(props) {
   let OV = useRef(new OpenVidu());
-  const [mySessionId, setMySessionId] = useState("SessionA");
+  const [mySessionId, setMySessionId] = useState("Session A");
   const [localUser, setLocalUser] = useState(new UserModel());
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
@@ -20,7 +20,7 @@ export default function VideoRoom(props) {
         videoSource: undefined,
         publishAudio: isMicOn,
         publishVideo: isCameraOn,
-        resolution: "640x480",
+        resolution: "1280x720",
         frameRate: 30,
         insertMode: "REPLACE",
       })
@@ -35,7 +35,6 @@ export default function VideoRoom(props) {
   const init = async () => {
     setIsMicOn(localUser.isAudioActive());
     setIsCameraOn(localUser.isVideoActive());
-
     session.current
       .on("streamCreated", handleSessionStreamCreated)
       .on("signal:userChanged", handleSessionSignalUserChanged)
@@ -53,13 +52,6 @@ export default function VideoRoom(props) {
       window.removeEventListener("beforeunload", leaveSession);
     };
   }, []);
-
-  /* Connect User & Sunscribers to Webcam */
-  useEffect(() => {
-    if (localUser && localUser.connectionId.length) {
-      connectWebCam();
-    }
-  }, [localUser, subscribers]);
 
   /* Audio/Video Toggle */
   useEffect(() => {
@@ -150,14 +142,13 @@ export default function VideoRoom(props) {
 
   /* Publish Video/Audio to session */
   const connectWebCam = async () => {
-    session.current.unpublish(publisher);
     setPublisher(
       OV.current.initPublisher(undefined, {
         audioSource: undefined,
         videoSource: undefined,
         publishAudio: isMicOn,
         publishVideo: isCameraOn,
-        resolution: "640x480",
+        resolution: "1280x720",
         frameRate: 30,
         insertMode: "REPLACE",
       })
