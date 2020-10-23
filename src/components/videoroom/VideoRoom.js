@@ -55,7 +55,7 @@ export default function VideoRoom(props) {
 
   /* Audio/Video Toggle */
   useEffect(() => {
-    if (localUser.connectionId.length) {
+    if (localUser && localUser.connectionId.length) {
       setLocalUser((prevLocalUser) => {
         prevLocalUser.setVideoActive(isCameraOn);
         prevLocalUser.setAudioActive(isMicOn);
@@ -69,7 +69,7 @@ export default function VideoRoom(props) {
         isVideoActive: isCameraOn,
       });
     }
-  }, [isCameraOn, isMicOn]);
+  }, [isCameraOn, isMicOn, localUser]);
 
   /* Handle subscribers */
   const handleSessionStreamCreated = ({ stream }) => {
