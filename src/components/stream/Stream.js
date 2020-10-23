@@ -11,7 +11,7 @@ export default function StreamComponent({ user, isMicOn, isCameraOn }) {
   };
 
   return (
-    <div className="streamComponent">
+    <div className="stream-component">
       <OvVideo user={user} mutedSound={mutedSound} />
 
       <div id="statusIcons">
