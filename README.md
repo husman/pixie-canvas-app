@@ -1,5 +1,12 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Dependencies
+- [pixie-api](https://github.com/husman/pixie-api)
+
+Please fork this application's dependencies and clone a copy of your fork into your machine.
+
+Please see the instructions in the dependency's **README.md**.
+
 ## Available Scripts
 
 In the project directory, you can run:
