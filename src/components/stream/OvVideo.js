@@ -21,7 +21,7 @@ export default function OvVideo({ user, mutedSound }) {
     <video
       ref={videoRef}
       autoPlay={true}
-      id={"video-" + stream.stream.streamId}
+      id={`video-${stream.stream.streamId}`}
       muted={mutedSound}
     />
   );
