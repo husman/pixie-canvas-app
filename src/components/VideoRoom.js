@@ -11,32 +11,31 @@ export default function VideoRoom() {
   const [localUser, setLocalUser] = useState(new UserModel());
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
-  const [subscribers, setSubscribers] = useState([]);
+  const [subscribers, setSubscribers] = useState({});
+  const session = useRef(OV.current && OV.current.initSession());
   const [publisher, setPublisher] = useState(
     OV.initPublisher(undefined, {
-        audioSource: undefined,
-        videoSource: undefined,
-        publishAudio: isMicOn,
-        publishVideo: isCameraOn,
-        resolution: "1280x720",
-        frameRate: 30,
-        insertMode: "REPLACE",
-      })
+      audioSource: undefined,
+      videoSource: undefined,
+      publishAudio: isMicOn || false,
+      publishVideo: isCameraOn || false,
+      resolution: "1280x720",
+      frameRate: 30,
+      insertMode: "APPEND",
+    })
   );
   const [showVideoContainer, setShowVideoContainer] = useState(false);
   const myUserName = useRef("OpenVidu_User" + Math.floor(Math.random() * 100));
-  const videoContainerRef = useRef();
   const mainContainerRef = useRef();
   const session = useRef(OV.initSession());
 
   /* Initialize Video/Audio Session */
   const init = async () => {
-    setIsMicOn(localUser.isAudioActive());
-    setIsCameraOn(localUser.isVideoActive());
-    session.current
-      .on("streamCreated", handleSessionStreamCreated)
-      .on("signal:userChanged", handleSessionSignalUserChanged)
-      .on("streamDestroyed", handleSessionStreamDestroy);
+    session.current &&
+      session.current
+        .on("streamCreated", handleSessionStreamCreated)
+        .on("signal:userChanged", handleSignalUserChanged)
+        .on("streamDestroyed", handleSessionStreamDestroy);
 
     await connect();
     setShowVideoContainer(true);
@@ -44,7 +43,6 @@ export default function VideoRoom() {
 
   useEffect(() => {
     init();
-
     window.addEventListener("beforeunload", leaveSession);
     return () => {
       window.removeEventListener("beforeunload", leaveSession);
@@ -53,75 +51,63 @@ export default function VideoRoom() {
 
   /* Audio/Video Toggle */
   useEffect(() => {
-    if (localUser && localUser.connectionId.length) {
-      setLocalUser((prevLocalUser) => {
-        prevLocalUser.setVideoActive(isCameraOn);
-        prevLocalUser.setAudioActive(isMicOn);
-        return prevLocalUser;
-      });
-
-      localUser.streamManager.publishAudio(isMicOn);
-      localUser.streamManager.publishVideo(isCameraOn);
-      sendSignalUserChanged({
-        isAudioActive: isMicOn,
-        isVideoActive: isCameraOn,
-      });
+    if (publisher.stream.streamId) {
+      publisher.publishAudio(isMicOn);
+      publisher.publishVideo(isCameraOn);
+      sendSignalUserChanged();
     }
-  }, [isCameraOn, isMicOn, localUser]);
+  }, [isCameraOn, isMicOn]);
+
+  /* Sending out event that the signal:userChanged for the session with the data passed in to the event */
+  const sendSignalUserChanged = async () => {
+    const signalOptions = {
+      data: JSON.stringify({
+        subscriberId: publisher.stream.streamId,
+        isCameraOn,
+        isMicOn,
+      }),
+      type: "userChanged",
+    };
+    await session.current.signal(signalOptions);
+  };
 
   /* Handle subscribers */
   const handleSessionStreamCreated = ({ stream }) => {
     const subscriber = session.current.subscribe(stream, undefined);
-    const newUser = new UserModel();
+    const newSubscriber = {
+      stream: subscriber,
+      isMicOn: false,
+      isCameraOn: false,
+    };
 
-    newUser.setStreamManager(subscriber);
-    newUser.setConnectionId(stream.connection.connectionId);
-    newUser.setType("remote");
-
-    setSubscribers((prevSubscribers) => [...prevSubscribers, newUser]);
+    setSubscribers((prevSubscribers) => {
+      prevSubscribers[subscriber.stream.streamId] = newSubscriber;
+      return { ...prevSubscribers };
+    });
   };
 
-  /* Handle Audio/Video Toggle */
-  const handleSessionSignalUserChanged = (event) => {
-    setSubscribers((prevSubscribers) => {
-      prevSubscribers.forEach((subscriber) => {
-        if (subscriber.getConnectionId() === event.from.connectionId) {
-          const data = JSON.parse(event.data);
-
-          if (data.isAudioActive !== subscriber.getAudioActive()) {
-            subscriber.setAudioActive(data.isAudioActive);
-          }
-          if (data.isVideoActive !== subscriber.getVideoActive()) {
-            subscriber.setVideoActive(data.isVideoActive);
-          }
-        }
+  const handleSignalUserChanged = ({ data }) => {
+    const dataObj = JSON.parse(data);
+    if (dataObj.subscriberId !== publisher.stream.streamId) {
+      setSubscribers((prevSubscribers) => {
+        const newSubscriberSettings = {
+          ...prevSubscribers[dataObj.subscriberId],
+          isMicOn: dataObj.isMicOn,
+          isCameraOn: dataObj.isCameraOn,
+        };
+        prevSubscribers[dataObj.subscriberId] = newSubscriberSettings;
+        return { ...prevSubscribers };
       });
-      return prevSubscribers;
-    });
+    }
   };
 
   /* Destroy Stream */
   const handleSessionStreamDestroy = (event) => {
-    deleteSubscriber(event.stream);
-    event.preventDefault();
-  };
-
-  /* Get session token */
-  const getToken = async () => {
-    const meetingUrl = uuidv4();
-
-    const host =
-      process.env.NODE_ENV && false === "development"
-        ? "http://localhost:4000"
-        : "http://pixie.neetos.com";
-
-    try {
-      const response = await fetch(`${host}/token?meetingUrl=${meetingUrl}`);
-      const { token } = await response.json();
-      return token;
-    } catch (e) {
-      throw e;
-    }
+    const target = event.stream.streamId;
+    setSubscribers((prevSubscribers) => {
+      delete prevSubscribers[target];
+      return { ...prevSubscribers };
+    });
   };
 
   /* Connect to session */
@@ -134,6 +120,22 @@ export default function VideoRoom() {
       await connectWebCam();
     } catch (e) {
       alert("There was an error connecting to the session:", e.message);
+      throw e;
+    }
+  };
+
+  /* Get session token */
+  const getToken = async () => {
+    const host =
+      process.env.NODE_ENV && false === "development"
+        ? "http://localhost:4000"
+        : "http://pixie.neetos.com";
+
+    try {
+      const response = await fetch(`${host}/token?meetingUrl=${sessionId}`);
+      const { token } = await response.json();
+      return token;
+    } catch (e) {
       throw e;
     }
   };
@@ -158,34 +160,6 @@ export default function VideoRoom() {
       await session.current.publish(publisher);
     } catch (e) {
       throw e;
-    }
-
-    setLocalUser((prevLocalUser) => {
-      prevLocalUser.setConnectionId(session.current.connection.connectionId);
-      prevLocalUser.setStreamManager(publisher);
-      return prevLocalUser;
-    });
-  };
-
-  /* Update session signal */
-  const sendSignalUserChanged = async (data) => {
-    const signalOptions = {
-      data: JSON.stringify(data),
-      type: "userChanged",
-    };
-    await session.current.signal(signalOptions);
-  };
-
-  /* Remove Subscriber from stream */
-  const deleteSubscriber = (stream) => {
-    const remoteUsers = subscribers;
-    const userStream = remoteUsers.filter(
-      (user) => user.getStreamManager().stream === stream
-    )[0];
-    let index = remoteUsers.indexOf(userStream, 0);
-    if (index > -1) {
-      remoteUsers.splice(index, 1);
-      setSubscribers(remoteUsers);
     }
   };
 
@@ -234,47 +208,31 @@ export default function VideoRoom() {
     // Clear Properties
     // @TODO update OV context value
     session.current = undefined;
-    setSubscribers([]);
-    setMySessionId("SessionA");
-    setLocalUser(undefined);
+    setSubscribers({});
+    setPublisher(undefined);
   };
 
   return (
     <div className="container" id="main-container" ref={mainContainerRef}>
-      {localUser && (
+      {publisher && (
         <>
           <ToolbarComponent
-            sessionId={mySessionId}
-            user={localUser}
+            stream={publisher}
             camStatusChanged={camStatusChanged}
             micStatusChanged={micStatusChanged}
             toggleFullscreen={toggleFullscreen}
             leaveSession={leaveSession}
             isMicOn={isMicOn}
             isCameraOn={isCameraOn}
+            sessionId={sessionId}
           />
           {showVideoContainer && (
-            <div
-              id="video-container"
-              className="bounds"
-              ref={videoContainerRef}
-            >
-              <div className="publisher" id="localUser">
-                <StreamComponent
-                  user={localUser}
-                  isMicOn={isMicOn}
-                  isCameraOn={isCameraOn}
-                />
-              </div>
-              {subscribers.map((sub, i) => (
-                <div key={i} className="subscribers" id="remoteUsers">
-                  <StreamComponent
-                    user={sub}
-                    streamId={sub.streamManager.stream.streamId}
-                  />
-                </div>
-              ))}
-            </div>
+            <Videos
+              stream={publisher}
+              isMicOn={isMicOn}
+              isCameraOn={isCameraOn}
+              subscribers={subscribers}
+            />
           )}
         </>
       )}
