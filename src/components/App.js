@@ -1,14 +1,13 @@
-import React from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-} from 'react-router-dom';
-import VideoRoom from './videoroom/VideoRoom';
-import Canvas from './Canvas';
+import React from "react";
+import { useState } from "react";
+
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import VideoRoom from "./videoroom/VideoRoom";
+import JoinMeetingForm from "./JoinMeetingForm";
+import Canvas from "./Canvas";
 
 export default function App() {
+  const [sessionId, setSessionId] = useState("");
   return (
     <Router>
       <Switch>
@@ -25,7 +24,14 @@ export default function App() {
           </ul>
         </Route>
         <Route path="/video">
-          <VideoRoom />
+          {!sessionId && (
+            <JoinMeetingForm
+              onSubmit={(newSessionId) => {
+                setSessionId(newSessionId);
+              }}
+            />
+          )}
+          {sessionId && <VideoRoom sessionId={sessionId} />}
         </Route>
         <Route path="/canvas">
           <Canvas />
