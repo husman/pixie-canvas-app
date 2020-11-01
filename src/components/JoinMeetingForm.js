@@ -38,7 +38,12 @@ const JoinMeetingForm = ({ onSubmit }) => {
             Back
           </button>
           <label className="label">Meeting ID</label>
-          <input type="text" onChange={handleChange} className="input" />
+          <input
+            type="text"
+            onChange={handleChange}
+            className="input"
+            size="40"
+          />
           <button type="submit" className="btn">
             Join
           </button>
