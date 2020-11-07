@@ -2,8 +2,17 @@ import React from "react";
 import StreamComponent from "./Stream";
 
 const Videos = ({ stream, isMicOn, isCameraOn, subscribers }) => {
+  const subscribersCt = Object.keys(subscribers).length;
+  let videoLayout = "one";
+
+  if (subscribersCt >= 1 && subscribersCt < 4) {
+    videoLayout = "two";
+  } else if (subscribersCt >= 4) {
+    videoLayout = "three";
+  }
+
   return (
-    <div className="video-container">
+    <div className={`video-container video-${videoLayout}-col`}>
       <StreamComponent
         stream={stream}
         isMicOn={isMicOn}
