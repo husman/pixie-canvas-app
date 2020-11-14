@@ -1,14 +1,16 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { v4 as uuidv4 } from "uuid";
-import StreamComponent from "../stream/Stream";
-import ToolbarComponent from "../toolbar/Toolbar";
-import UserModel from "../../models/UserModels";
+import Toolbar from "./Toolbar";
+import Videos from "./Videos";
 import OvContext from "../../context/openVidu";
+import {
+  STREAM_CREATED,
+  SIGNAL_USER_CHANGED,
+  STREAM_DESTROYED,
+} from "./constants/signals";
+import "../styles/index.css";
 
 export default function VideoRoom() {
   const OV = useContext(OvContext);
-  const [mySessionId, setMySessionId] = useState("Session A");
-  const [localUser, setLocalUser] = useState(new UserModel());
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [subscribers, setSubscribers] = useState({});
@@ -33,9 +35,9 @@ export default function VideoRoom() {
   const init = async () => {
     session.current &&
       session.current
-        .on("streamCreated", handleSessionStreamCreated)
-        .on("signal:userChanged", handleSignalUserChanged)
-        .on("streamDestroyed", handleSessionStreamDestroy);
+        .on(STREAM_CREATED, handleSessionStreamCreated)
+        .on(SIGNAL_USER_CHANGED, handleSignalUserChanged)
+        .on(STREAM_DESTROYED, handleSessionStreamDestroy);
 
     await connect();
     setShowVideoContainer(true);
@@ -66,7 +68,7 @@ export default function VideoRoom() {
         isCameraOn,
         isMicOn,
       }),
-      type: "userChanged",
+      type: ,
     };
     await session.current.signal(signalOptions);
   };
@@ -216,7 +218,7 @@ export default function VideoRoom() {
     <div className="container" id="main-container" ref={mainContainerRef}>
       {publisher && (
         <>
-          <ToolbarComponent
+          <Toolbar
             stream={publisher}
             camStatusChanged={camStatusChanged}
             micStatusChanged={micStatusChanged}
