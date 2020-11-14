@@ -70,7 +70,6 @@ body {
   background-color: black;
   margin: var(--video-margin);
   margin-bottom: 0;
-  width: 100%;
 }
 
 .video-status-icons {
