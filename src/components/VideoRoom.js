@@ -1,10 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
 import { OpenVidu } from "openvidu-browser";
 import ToolbarComponent from "./Toolbar";
-import "../styles/index.css";
 import Videos from "./Videos";
+import "../styles/index.css";
+import {
+  STREAM_CREATED,
+  SIGNAL_USER_CHANGED,
+  STREAM_DESTROYED,
+} from "./constants/signals";
 
-export default function VideoRoom({ sessionId = "session" }) {
+export default function VideoRoom({ sessionId }) {
   const OV = useRef(new OpenVidu());
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
@@ -30,9 +35,9 @@ export default function VideoRoom({ sessionId = "session" }) {
   const init = async () => {
     session.current &&
       session.current
-        .on("streamCreated", handleSessionStreamCreated)
-        .on("signal:userChanged", handleSignalUserChanged)
-        .on("streamDestroyed", handleSessionStreamDestroy);
+        .on(STREAM_CREATED, handleSessionStreamCreated)
+        .on(SIGNAL_USER_CHANGED, handleSignalUserChanged)
+        .on(STREAM_DESTROYED, handleSessionStreamDestroy);
 
     await connect();
     setShowVideoContainer(true);
@@ -63,7 +68,7 @@ export default function VideoRoom({ sessionId = "session" }) {
         isCameraOn,
         isMicOn,
       }),
-      type: "userChanged",
+      type: ,
     };
     await session.current.signal(signalOptions);
   };
