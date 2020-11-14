@@ -7,7 +7,9 @@ import {
   STREAM_CREATED,
   SIGNAL_USER_CHANGED,
   STREAM_DESTROYED,
+  USER_CHANGED,
 } from "./constants/signals";
+import { RESOLUTION, INSERT_MODE } from "./constants/video";
 
 export default function VideoRoom({ sessionId }) {
   const OV = useRef(new OpenVidu());
@@ -22,13 +24,13 @@ export default function VideoRoom({ sessionId }) {
         videoSource: undefined,
         publishAudio: isMicOn || false,
         publishVideo: isCameraOn || false,
-        resolution: "1280x720",
+        resolution: RESOLUTION,
         frameRate: 30,
-        insertMode: "APPEND",
+        insertMode: INSERT_MODE,
       })
   );
   const [showVideoContainer, setShowVideoContainer] = useState(false);
-  const myUserName = useRef("OpenVidu_User" + Math.floor(Math.random() * 100));
+  const myUserName = useRef(DEFAULT_USERNAME + Math.floor(Math.random() * 100));
   const mainContainerRef = useRef();
 
   /* Initialize Video/Audio Session */
@@ -60,7 +62,7 @@ export default function VideoRoom({ sessionId }) {
     }
   }, [isCameraOn, isMicOn]);
 
-  /* Sending out event that the signal:userChanged for the session with the data passed in to the event */
+  /* Signals user changed in session */
   const sendSignalUserChanged = async () => {
     const signalOptions = {
       data: JSON.stringify({
@@ -68,7 +70,7 @@ export default function VideoRoom({ sessionId }) {
         isCameraOn,
         isMicOn,
       }),
-      type: ,
+      type: USER_CHANGED,
     };
     await session.current.signal(signalOptions);
   };
@@ -195,7 +197,6 @@ export default function VideoRoom({ sessionId }) {
   /* Leave session */
   const leaveSession = () => {
     session && session.current.disconnect();
-    // Clear Properties
     OV.current = null;
     session.current = undefined;
     setSubscribers({});
@@ -203,7 +204,7 @@ export default function VideoRoom({ sessionId }) {
   };
 
   return (
-    <div className="container" id="main-container" ref={mainContainerRef}>
+    <div className="container" ref={mainContainerRef}>
       {publisher && (
         <>
           <ToolbarComponent
