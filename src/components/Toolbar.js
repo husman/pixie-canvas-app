@@ -43,7 +43,6 @@ export default function Toolbar({
   return (
     <header id="header">
       <h3 id="session-title">{sessionId}</h3>
-
       <div className="nav-buttons-container">
         <IconButton
           color="inherit"

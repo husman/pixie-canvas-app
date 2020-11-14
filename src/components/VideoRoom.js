@@ -6,7 +6,9 @@ import {
   STREAM_CREATED,
   SIGNAL_USER_CHANGED,
   STREAM_DESTROYED,
+  USER_CHANGED,
 } from "./constants/signals";
+import { RESOLUTION, INSERT_MODE } from "./constants/video";
 import "../styles/index.css";
 
 export default function VideoRoom() {
@@ -21,13 +23,14 @@ export default function VideoRoom() {
       videoSource: undefined,
       publishAudio: isMicOn || false,
       publishVideo: isCameraOn || false,
-      resolution: "1280x720",
+      resolution: RESOLUTION,
       frameRate: 30,
-      insertMode: "APPEND",
+      insertMode: INSERT_MODE,
     })
   );
+
   const [showVideoContainer, setShowVideoContainer] = useState(false);
-  const myUserName = useRef("OpenVidu_User" + Math.floor(Math.random() * 100));
+  const myUserName = useRef(DEFAULT_USERNAME + Math.floor(Math.random() * 100));
   const mainContainerRef = useRef();
   const session = useRef(OV.initSession());
 
@@ -60,7 +63,7 @@ export default function VideoRoom() {
     }
   }, [isCameraOn, isMicOn]);
 
-  /* Sending out event that the signal:userChanged for the session with the data passed in to the event */
+  /* Signals user changed in session */
   const sendSignalUserChanged = async () => {
     const signalOptions = {
       data: JSON.stringify({
@@ -68,7 +71,7 @@ export default function VideoRoom() {
         isCameraOn,
         isMicOn,
       }),
-      type: ,
+      type: USER_CHANGED,
     };
     await session.current.signal(signalOptions);
   };
@@ -207,15 +210,19 @@ export default function VideoRoom() {
   /* Leave session */
   const leaveSession = () => {
     session && session.current.disconnect();
+<<<<<<< HEAD
     // Clear Properties
     // @TODO update OV context value
+=======
+    OV.current = null;
+>>>>>>> 21c07e2 (removed unused ids and cleaned up comments)
     session.current = undefined;
     setSubscribers({});
     setPublisher(undefined);
   };
 
   return (
-    <div className="container" id="main-container" ref={mainContainerRef}>
+    <div className="container" ref={mainContainerRef}>
       {publisher && (
         <>
           <Toolbar
