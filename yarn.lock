@@ -2162,10 +2162,9 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@neetos/pixie-impress@^0.6.0":
+"@neetos/pixie-impress@neetos-llc/pixie-impress":
   version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@neetos/pixie-impress/-/pixie-impress-0.6.0.tgz#3e2eca89b0f4703ffd6acdb619e6950cd3c7afb8"
-  integrity sha512-58rlzPO0fuSAG/xqGvOsVJ9wUrqQqP6zexWBzlc9YEwJd6ROgxktzZRe0yxRFN2JakuBYVXpuZK/qREvyxuGBA==
+  resolved "git+ssh://git@github.com/neetos-llc/pixie-impress.git#ceabd668a795d72684c1661521079f03a6b9a14a"
   dependencies:
     "@babel/core" "^7.11.6"
     "@babel/preset-env" "^7.11.5"
