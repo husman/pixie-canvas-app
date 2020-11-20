@@ -9,7 +9,7 @@ import {
   STREAM_DESTROYED,
   USER_CHANGED,
 } from "./constants/signals";
-import { RESOLUTION, INSERT_MODE } from "./constants/video";
+import { RESOLUTION, INSERT_MODE, DEFAULT_USERNAME } from "./constants/video";
 
 export default function VideoRoom({ sessionId }) {
   const OV = useRef(new OpenVidu());
