@@ -32,14 +32,20 @@ body {
 }
 
 .video-container {
-  --videos-cont-height: calc(
-    98vh - var(--header-size) - (var(--video-margin) * 2)
-  );
+  --videos-cont-height: calc(100vh - var(--header-size));
   width: 100%;
   height: var(--videos-cont-height);
   max-height: 100%;
-  text-align: center;
   --margin: calc(var(--video-margin) * 2);
+  position: relative;
+}
+
+.video-centering {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+  width: 100%;
 }
 
 .video-one-col {
