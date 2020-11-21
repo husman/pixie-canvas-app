@@ -1,8 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { OpenVidu } from "openvidu-browser";
-import ToolbarComponent from "./Toolbar";
-import Videos from "./Videos";
-import "../styles/index.css";
 import {
   STREAM_CREATED,
   SIGNAL_USER_CHANGED,
@@ -10,6 +7,9 @@ import {
   USER_CHANGED,
 } from "./constants/signals";
 import { RESOLUTION, INSERT_MODE, DEFAULT_USERNAME } from "./constants/video";
+import ToolbarComponent from "./Toolbar";
+import Videos from "./Videos";
+import "../styles/index.css";
 
 export default function VideoRoom({ sessionId }) {
   const OV = useRef(new OpenVidu());
