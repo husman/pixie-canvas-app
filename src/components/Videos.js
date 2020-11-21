@@ -13,21 +13,23 @@ const Videos = ({ stream, isMicOn, isCameraOn, subscribers }) => {
 
   return (
     <div className={`video-container video-${videoLayout}-col`}>
-      <StreamComponent
-        stream={stream}
-        isMicOn={isMicOn}
-        isCameraOn={isCameraOn}
-        className="user-stream"
-      />
-      {Object.entries(subscribers).map(([key, value]) => (
+      <div className="video-centering">
         <StreamComponent
-          stream={value.stream}
-          className="subscriber-stream"
-          key={key}
-          isMicOn={value.isMicOn}
-          isCameraOn={value.isCameraOn}
+          stream={stream}
+          isMicOn={isMicOn}
+          isCameraOn={isCameraOn}
+          className="user-stream"
         />
-      ))}
+        {Object.entries(subscribers).map(([key, value]) => (
+          <StreamComponent
+            stream={value.stream}
+            className="subscriber-stream"
+            key={key}
+            isMicOn={value.isMicOn}
+            isCameraOn={value.isCameraOn}
+          />
+        ))}
+      </div>
     </div>
   );
 };
