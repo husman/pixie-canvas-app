@@ -8,7 +8,7 @@ import {
   STREAM_DESTROYED,
   USER_CHANGED,
 } from "./constants/signals";
-import { RESOLUTION, INSERT_MODE, DEFAULT_USERNAME} from "./constants/video";
+import { RESOLUTION, INSERT_MODE, DEFAULT_USERNAME } from "./constants/video";
 import "../styles/index.css";
 
 export default function VideoRoom() {
@@ -210,12 +210,8 @@ export default function VideoRoom() {
   /* Leave session */
   const leaveSession = () => {
     session && session.current.disconnect();
-<<<<<<< HEAD
     // Clear Properties
     // @TODO update OV context value
-=======
-    OV.current = null;
->>>>>>> 21c07e2 (removed unused ids and cleaned up comments)
     session.current = undefined;
     setSubscribers({});
     setPublisher(undefined);
