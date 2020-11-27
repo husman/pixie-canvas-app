@@ -1,21 +1,19 @@
-import React, { useEffect, useState, useRef } from "react";
-import { OpenVidu } from "openvidu-browser";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import StreamComponent from "../stream/Stream";
 import ToolbarComponent from "../toolbar/Toolbar";
 import UserModel from "../../models/UserModels";
-import "./VideoRoom.css";
+import OvContext from "../../context/openVidu";
 
-export default function VideoRoom(props) {
-  let OV = useRef(new OpenVidu());
+export default function VideoRoom() {
+  const OV = useContext(OvContext);
   const [mySessionId, setMySessionId] = useState("Session A");
   const [localUser, setLocalUser] = useState(new UserModel());
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [subscribers, setSubscribers] = useState([]);
   const [publisher, setPublisher] = useState(
-    OV.current &&
-      OV.current.initPublisher(undefined, {
+    OV.initPublisher(undefined, {
         audioSource: undefined,
         videoSource: undefined,
         publishAudio: isMicOn,
@@ -29,7 +27,7 @@ export default function VideoRoom(props) {
   const myUserName = useRef("OpenVidu_User" + Math.floor(Math.random() * 100));
   const videoContainerRef = useRef();
   const mainContainerRef = useRef();
-  const session = useRef(OV.current && OV.current.initSession());
+  const session = useRef(OV.initSession());
 
   /* Initialize Video/Audio Session */
   const init = async () => {
@@ -143,7 +141,7 @@ export default function VideoRoom(props) {
   /* Publish Video/Audio to session */
   const connectWebCam = async () => {
     setPublisher(
-      OV.current.initPublisher(undefined, {
+      OV.initPublisher(undefined, {
         audioSource: undefined,
         videoSource: undefined,
         publishAudio: isMicOn,
@@ -234,7 +232,7 @@ export default function VideoRoom(props) {
   const leaveSession = () => {
     session && session.current.disconnect();
     // Clear Properties
-    OV.current = null;
+    // @TODO update OV context value
     session.current = undefined;
     setSubscribers([]);
     setMySessionId("SessionA");
