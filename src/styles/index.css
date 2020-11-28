@@ -138,7 +138,3 @@ video {
 .input:focus {
   outline: none;
 }
-
-/* video {
-  flex-shrink: 2; default 1
-} */
