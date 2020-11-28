@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 import { v4 as uuidv4 } from "uuid";
 
 const JoinMeetingForm = ({ onSubmit }) => {
@@ -9,9 +10,9 @@ const JoinMeetingForm = ({ onSubmit }) => {
     setJoiningNewMeeting((prev) => !prev);
   }, [setJoiningNewMeeting]);
 
-  const handleChange = ({ currentTarget: { value } }) => {
+  const handleChange = useDebouncedCallback((value) => {
     setMeetingUrl(value);
-  };
+  }, 250);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,7 +37,7 @@ const JoinMeetingForm = ({ onSubmit }) => {
           <label className="label">Meeting ID</label>
           <input
             type="text"
-            onChange={handleChange}
+            onChange={(e) => handleChange.callback(e.currentTarget.value)}
             className="input"
             size="40"
           />
