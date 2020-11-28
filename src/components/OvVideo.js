@@ -9,7 +9,5 @@ export default function OvVideo({ stream }) {
     }
   }, [stream]);
 
-  return (
-    <video ref={videoRef} autoPlay id={`video-${stream.stream.streamId}`} />
-  );
+  return <video ref={videoRef} autoPlay />;
 }
