@@ -22,14 +22,11 @@ export default function App() {
           </ul>
         </Route>
         <Route path="/video">
-          {!sessionId && (
-            <JoinMeetingForm
-              onSubmit={(newSessionId) => {
-                setSessionId(newSessionId);
-              }}
-            />
+          {!sessionId ? (
+            <JoinMeetingForm onSubmit={setSessionId} />
+          ) : (
+            <VideoRoom sessionId={sessionId} />
           )}
-          {sessionId && <VideoRoom sessionId={sessionId} />}
         </Route>
         <Route path="/canvas">
           <Canvas />
