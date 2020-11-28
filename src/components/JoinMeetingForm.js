@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const JoinMeetingForm = ({ onSubmit }) => {
@@ -7,9 +7,9 @@ const JoinMeetingForm = ({ onSubmit }) => {
 
   const handleNewMeeting = () => {};
 
-  const toggleJoinMeeting = () => {
+  const toggleJoinMeeting = useCallback(() => {
     setJoiningNewMeeting((prev) => !prev);
-  };
+  }, [setJoiningNewMeeting]);
 
   const handleChange = ({ currentTarget: { value } }) => {
     setMeetingUrl(value);
