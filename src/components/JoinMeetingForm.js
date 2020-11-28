@@ -5,8 +5,6 @@ const JoinMeetingForm = ({ onSubmit }) => {
   const [joiningNewMeeting, setJoiningNewMeeting] = useState(false);
   const [meetingUrl, setMeetingUrl] = useState("");
 
-  const handleNewMeeting = () => {};
-
   const toggleJoinMeeting = useCallback(() => {
     setJoiningNewMeeting((prev) => !prev);
   }, [setJoiningNewMeeting]);
@@ -24,9 +22,7 @@ const JoinMeetingForm = ({ onSubmit }) => {
     <form onSubmit={handleSubmit} className="meeting-form">
       {!joiningNewMeeting && (
         <>
-          <button onClick={handleNewMeeting} className="btn">
-            Create a New Meeting
-          </button>
+          <button className="btn">Create a New Meeting</button>
           <button onClick={toggleJoinMeeting} className="btn">
             Join a Meeting
           </button>
