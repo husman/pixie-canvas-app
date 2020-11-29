@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import Toolbar from "./Toolbar";
 import Videos from "./Videos";
-import OvContext from "../../context/openVidu";
+import OvContext from "../context/openVidu";
 import {
   STREAM_CREATED,
   SIGNAL_USER_CHANGED,
@@ -9,14 +9,12 @@ import {
   USER_CHANGED,
 } from "./constants/signals";
 import { RESOLUTION, INSERT_MODE, DEFAULT_USERNAME } from "./constants/video";
-import "../styles/index.css";
 
-export default function VideoRoom() {
+export default function VideoRoom({ sessionId }) {
   const OV = useContext(OvContext);
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [subscribers, setSubscribers] = useState({});
-  const session = useRef(OV.current && OV.current.initSession());
   const [publisher, setPublisher] = useState(
     OV.initPublisher(undefined, {
       audioSource: undefined,
