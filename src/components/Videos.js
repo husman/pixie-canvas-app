@@ -1,5 +1,5 @@
 import React from "react";
-import StreamComponent from "./Stream";
+import Stream from "./Stream";
 
 const Videos = ({ stream, isMicOn, isCameraOn, subscribers }) => {
   const subscribersCt = Object.keys(subscribers).length;
@@ -14,14 +14,14 @@ const Videos = ({ stream, isMicOn, isCameraOn, subscribers }) => {
   return (
     <div className={`video-container video-${videoLayout}-col`}>
       <div className="video-centering">
-        <StreamComponent
+        <Stream
           stream={stream}
           isMicOn={isMicOn}
           isCameraOn={isCameraOn}
           className="user-stream"
         />
         {Object.entries(subscribers).map(([key, value]) => (
-          <StreamComponent
+          <Stream
             stream={value.stream}
             className="subscriber-stream"
             key={key}
