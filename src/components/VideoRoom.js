@@ -27,10 +27,11 @@ export default function VideoRoom({ sessionId }) {
     })
   );
 
+  const session = useRef(OV.initSession());
   const [showVideoContainer, setShowVideoContainer] = useState(false);
   const myUserName = useRef(DEFAULT_USERNAME + Math.floor(Math.random() * 100));
   const mainContainerRef = useRef();
-  const session = useRef(OV.initSession());
+  // const session = useRef(OV.initSession());
 
   /* Initialize Video/Audio Session */
   const init = async () => {
