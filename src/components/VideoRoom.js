@@ -152,9 +152,9 @@ export default function VideoRoom({ sessionId }) {
         videoSource: undefined,
         publishAudio: isMicOn,
         publishVideo: isCameraOn,
-        resolution: "1280x720",
+        resolution: RESOLUTION,
         frameRate: 30,
-        insertMode: "REPLACE",
+        insertMode: INSERT_MODE,
       })
     );
 
