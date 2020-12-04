@@ -8,7 +8,12 @@ import {
   STREAM_DESTROYED,
   USER_CHANGED,
 } from "./constants/signals";
-import { RESOLUTION, INSERT_MODE, DEFAULT_USERNAME } from "./constants/video";
+import {
+  RESOLUTION,
+  INSERT_MODE,
+  DEFAULT_USERNAME,
+  VIDEO_FRAME_RATE,
+} from "./constants/video";
 
 export default function VideoRoom({ sessionId }) {
   const OV = useContext(OvContext);
@@ -22,7 +27,7 @@ export default function VideoRoom({ sessionId }) {
       publishAudio: isMicOn || false,
       publishVideo: isCameraOn || false,
       resolution: RESOLUTION,
-      frameRate: 30,
+      frameRate: VIDEO_FRAME_RATE,
       insertMode: INSERT_MODE,
     })
   );
@@ -153,7 +158,7 @@ export default function VideoRoom({ sessionId }) {
         publishAudio: isMicOn,
         publishVideo: isCameraOn,
         resolution: RESOLUTION,
-        frameRate: 30,
+        frameRate: VIDEO_FRAME_RATE,
         insertMode: INSERT_MODE,
       })
     );
