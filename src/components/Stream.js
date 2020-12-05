@@ -10,7 +10,7 @@ export default function StreamComponent({
 }) {
   return (
     <div className={`stream-container ${className}`}>
-      <OvVideo stream={stream} />
+      <OvVideo stream={stream} isCameraOn={isCameraOn} />
 
       <div className="video-status-icons">
         {!isCameraOn && <VideocamOff className="cam-off-icon" />}

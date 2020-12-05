@@ -85,6 +85,7 @@ export default function VideoRoom({ sessionId }) {
       stream: subscriber,
       isMicOn: false,
       isCameraOn: false,
+      // isPinned: false,
     };
 
     setSubscribers((prevSubscribers) => {
@@ -103,6 +104,7 @@ export default function VideoRoom({ sessionId }) {
           ...prevSubscribers[dataObj.subscriberId],
           isMicOn: dataObj.isMicOn,
           isCameraOn: dataObj.isCameraOn,
+          // isPinned:,
         };
         prevSubscribers[dataObj.subscriberId] = newSubscriberSettings;
         return { ...prevSubscribers };
@@ -189,6 +191,11 @@ export default function VideoRoom({ sessionId }) {
     setIsMicOn((prev) => !prev);
   };
 
+  const updatePinnedVideos = (pinnedVideos) => {
+    console.log("Videoroom got pinned subscribers: ", pinnedVideos);
+    setSubscribers(pinnedVideos);
+  };
+
   /* Leave session */
   const leaveSession = () => {
     session && session.current.disconnect();
@@ -213,6 +220,7 @@ export default function VideoRoom({ sessionId }) {
             isCameraOn={isCameraOn}
             sessionId={sessionId}
             subscribers={subscribers}
+            updatePinnedVideos={updatePinnedVideos}
           />
           {showVideoContainer && (
             <Videos
