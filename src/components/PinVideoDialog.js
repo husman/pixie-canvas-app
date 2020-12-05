@@ -20,15 +20,7 @@ const subscribers_list = [
   { name: "Joel", video: true },
 ];
 
-const useStyles = makeStyles({
-  avatar: {
-    backgroundColor: colors.blue[100],
-    color: colors.blue[600],
-  },
-});
-
 export default function PinVideoDialog(props) {
-  const classes = useStyles();
   const { onClose, selectedValue, open } = props;
   const [subscribers, setSubscribers] = useState(subscribers_list);
 
@@ -67,7 +59,7 @@ export default function PinVideoDialog(props) {
                 key={index}
               >
                 <ListItemAvatar>
-                  <Avatar className={classes.avatar}>
+                  <Avatar>
                     <PersonIcon />
                   </Avatar>
                 </ListItemAvatar>
