@@ -16,13 +16,10 @@ import AddIcon from "@material-ui/icons/Add";
 
 export default function PinVideoDialog(props) {
   const { onClose, subscriber_list, open } = props;
-  // const [subscribers, setSubscribers] = useState(subscriber_list);
   const [pinnedVideos, setPinnedVideos] = useState(subscriber_list);
+  const subscribersCt = Object.keys(subscriber_list).length;
 
   const handleUpdatePins = () => {
-    // console.log("Handle Update Pins");
-    // setSubscribers(pinVideos);
-    // console.log("NEW SUBSCRIBERS", subscribers);
     onClose(pinnedVideos);
   };
 
@@ -45,18 +42,20 @@ export default function PinVideoDialog(props) {
         <DialogTitle id="simple-dialog-title">Pin Videos To Screen</DialogTitle>
         <List>
           {pinnedVideos &&
-            pinnedVideos.map((user, index) => (
-              <ListItem key={index}>
+            subscribersCt &&
+            Object.entries(pinnedVideos).map(([key, value]) => (
+              <ListItem key={key}>
+                {console.log("PINVIDEOSDIALOG subscribers", value)}
                 <ListItemAvatar>
                   <Avatar>
                     <PersonIcon />
                   </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={user.name} />
+                <ListItemText primary={value.stream.streamId} />
                 <Checkbox
-                  checked={user.video}
-                  onChange={() => handleCheck(index, user)}
-                  name={user.name}
+                  checked={user.isPinned}
+                  onChange={() => handleCheck(index, value.stream.streamId)}
+                  name={value.stream.streamId}
                 />
               </ListItem>
             ))}

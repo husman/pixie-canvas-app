@@ -20,14 +20,11 @@ export default function Toolbar({
   camStatusChanged,
   toggleFullscreen,
   leaveSession,
+  subscribers,
+  updatePinnedVideos,
 }) {
   const [fullscreen, setFullscreen] = useState(false);
   const [pinningVideos, setPinningVideos] = useState(false);
-  const [subscribers, setSubscribers] = useState([
-    { name: "Bob", video: true },
-    { name: "Mary", video: false },
-    { name: "Joel", video: true },
-  ]);
 
   const handleMicClick = () => {
     micStatusChanged();
@@ -52,7 +49,7 @@ export default function Toolbar({
 
   const handleClose = (pinnedVideos) => {
     /*  TOOD: Enforce contract that pinned videos can never remove subscribers from the stream, only alters their pinned state */
-    setSubscribers(pinnedVideos);
+    updatePinnedVideos(pinnedVideos);
     setPinningVideos(false);
   };
 
@@ -96,7 +93,7 @@ export default function Toolbar({
           <Button variant="contained" color="primary" onClick={togglePinVideos}>
             Pin Videos
           </Button>
-          {pinningVideos && (
+          {pinningVideos && subscribers && (
             <PinVideoDialog
               open={pinningVideos}
               subscriber_list={subscribers}
