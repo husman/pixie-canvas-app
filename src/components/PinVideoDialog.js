@@ -14,50 +14,39 @@ import {
 import PersonIcon from "@material-ui/icons/Person";
 import AddIcon from "@material-ui/icons/Add";
 
-const subscribers_list = [
-  { name: "Bob", video: true },
-  { name: "Mary", video: false },
-  { name: "Joel", video: true },
-];
-
 export default function PinVideoDialog(props) {
-  const { onClose, selectedValue, open } = props;
-  const [subscribers, setSubscribers] = useState(subscribers_list);
+  const { onClose, subscriber_list, open } = props;
+  // const [subscribers, setSubscribers] = useState(subscriber_list);
+  const [pinnedVideos, setPinnedVideos] = useState(subscriber_list);
 
-  const handleClose = () => {
-    console.log("Selected Value", selectedValue);
-    onClose(selectedValue);
+  const handleUpdatePins = () => {
+    // console.log("Handle Update Pins");
+    // setSubscribers(pinVideos);
+    // console.log("NEW SUBSCRIBERS", subscribers);
+    onClose(pinnedVideos);
   };
 
-  const handleListItemClick = (value) => {
-    onClose(value);
-  };
-
-  const handleCheck = (index, value) => {
-    const newPins = [...subscribers];
+  const handleCheck = async (index, value) => {
+    const newPins = [...pinnedVideos];
     newPins[index] = { name: value.name, video: !value.video };
-    setSubscribers(newPins);
+    setPinnedVideos(newPins);
   };
 
   // TODO: Add a function that takes in a subscriber and pins their video
 
   return (
-    console.log("RENDER MY SUBSCRIBERS", subscribers),
+    console.log("Pinned Videos", pinnedVideos),
     (
       <Dialog
-        onClose={handleClose}
+        onClose={handleUpdatePins}
         aria-labelledby="simple-dialog-title"
         open={open}
       >
         <DialogTitle id="simple-dialog-title">Pin Videos To Screen</DialogTitle>
         <List>
-          {subscribers &&
-            subscribers.map((user, index) => (
-              <ListItem
-                button
-                onClick={() => handleListItemClick(user.name)}
-                key={index}
-              >
+          {pinnedVideos &&
+            pinnedVideos.map((user, index) => (
+              <ListItem key={index}>
                 <ListItemAvatar>
                   <Avatar>
                     <PersonIcon />
@@ -72,11 +61,7 @@ export default function PinVideoDialog(props) {
               </ListItem>
             ))}
 
-          <ListItem
-            autoFocus
-            button
-            onClick={() => handleListItemClick("Update Pins")}
-          >
+          <ListItem autoFocus button onClick={handleUpdatePins}>
             <ListItemAvatar>
               <Avatar>
                 <AddIcon />
