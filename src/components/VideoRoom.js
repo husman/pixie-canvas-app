@@ -93,6 +93,7 @@ export default function VideoRoom({ sessionId }) {
     });
   };
 
+  // TODO: Add "pinned" attribute to subscriber object or keep a separate shallow copy of subscribers and pinned status
   /* Handle Video/Audio toggle for subscribers */
   const handleSignalUserChanged = ({ data }) => {
     const dataObj = JSON.parse(data);
@@ -211,6 +212,7 @@ export default function VideoRoom({ sessionId }) {
             isMicOn={isMicOn}
             isCameraOn={isCameraOn}
             sessionId={sessionId}
+            subscribers={subscribers}
           />
           {showVideoContainer && (
             <Videos
