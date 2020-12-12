@@ -44,7 +44,7 @@ export default function Toolbar({
   };
 
   const togglePinVideos = () => {
-    setPinningVideos(true);
+    setPinningVideos((prev) => !prev);
   };
 
   const handleUpdatePinnedVideos = (pinnedVideos) => {
@@ -97,6 +97,7 @@ export default function Toolbar({
             open={pinningVideos}
             subscribers={subscribers}
             onClose={handleUpdatePinnedVideos}
+            onCancel={togglePinVideos}
           />
         )}
       </div>

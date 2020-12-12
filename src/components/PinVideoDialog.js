@@ -8,19 +8,26 @@ import {
   Avatar,
   ListItemText,
   Checkbox,
-  makeStyles,
-  colors,
 } from "@material-ui/core";
 import PersonIcon from "@material-ui/icons/Person";
 import AddIcon from "@material-ui/icons/Add";
 
-export default function PinVideoDialog({ onClose, subscribers, open }) {
+export default function PinVideoDialog({
+  onCancel,
+  onClose,
+  subscribers,
+  open,
+}) {
   const [pinnedVideos, setPinnedVideos] = useState(subscribers);
   const subscribersCt = Object.keys(subscribers).length;
 
   // Update pinned videos in videoroom
-  const syncPinnedVideos = () => {
-    onClose(pinnedVideos); // on close hierarchy pinvideodialog => toolbar => videoroom
+  const syncPinnedVideos = (syncVideos) => {
+    if (syncVideos) {
+      onClose(pinnedVideos); // on close hierarchy pinvideodialog => toolbar => videoroom
+    } else {
+      onCancel();
+    }
   };
 
   const handleCheck = async (subscriberStreamId, isPinned) => {
@@ -35,11 +42,11 @@ export default function PinVideoDialog({ onClose, subscribers, open }) {
     });
   };
 
-  // TODO: Add a function that takes in a subscriber and pins their video
+  // TODO: Handle
 
   return (
     <Dialog
-      onClose={syncPinnedVideos}
+      onClose={() => syncPinnedVideos(false)}
       aria-labelledby="simple-dialog-title"
       open={open}
     >
@@ -67,7 +74,7 @@ export default function PinVideoDialog({ onClose, subscribers, open }) {
             </ListItem>
           ))}
 
-        <ListItem autoFocus button onClick={syncPinnedVideos}>
+        <ListItem autoFocus button onClick={() => syncPinnedVideos(true)}>
           <ListItemAvatar>
             <Avatar>
               <AddIcon />
