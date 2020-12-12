@@ -15,6 +15,7 @@ export default function Toolbar({
   stream,
   isMicOn,
   isCameraOn,
+  isPinned,
   sessionId,
   micStatusChanged,
   camStatusChanged,
