@@ -20,14 +20,14 @@ export default function PinVideoDialog({ onClose, subscribers, open }) {
 
   // Update pinned videos in videoroom
   const syncPinnedVideos = () => {
-    onClose(pinnedVideos);
+    onClose(pinnedVideos); // on close hierarchy pinvideodialog => toolbar => videoroom
   };
 
-  const handleCheck = async (subscriberStreamId) => {
+  const handleCheck = async (subscriberStreamId, isPinned) => {
     const subscriber = pinnedVideos[subscriberStreamId];
     const pinnedSubscriber = {
       ...subscriber,
-      isPinned: true,
+      isPinned: !isPinned,
     };
     setPinnedVideos((prevSubscribers) => {
       prevSubscribers[subscriberStreamId] = pinnedSubscriber;
@@ -39,7 +39,7 @@ export default function PinVideoDialog({ onClose, subscribers, open }) {
 
   return (
     <Dialog
-      onClose={handleUpdatePins}
+      onClose={syncPinnedVideos}
       aria-labelledby="simple-dialog-title"
       open={open}
     >
@@ -60,14 +60,14 @@ export default function PinVideoDialog({ onClose, subscribers, open }) {
               }
               <Checkbox
                 checked={value.isPinned}
-                onChange={() => handleCheck(key)} // index subscriber by streamId in videroom
+                onChange={() => handleCheck(key, value.isPinned)} // index subscriber by streamId in videroom
                 name={value.stream.streamId}
               />
               {console.log("Dialog")}
             </ListItem>
           ))}
 
-        <ListItem autoFocus button onClick={handleUpdatePins}>
+        <ListItem autoFocus button onClick={syncPinnedVideos}>
           <ListItemAvatar>
             <Avatar>
               <AddIcon />

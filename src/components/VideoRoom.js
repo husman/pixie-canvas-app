@@ -192,9 +192,24 @@ export default function VideoRoom({ sessionId }) {
     setIsMicOn((prev) => !prev);
   };
 
-  const updatePinnedVideos = (pinnedVideos) => {
-    console.log("Videoroom got pinned subscribers: ", pinnedVideos);
-    setPinnedVideos(pinnedVideos);
+  const updatePinnedVideos = (updatedPins) => {
+    console.log("Videoroom got pinned subscribers: ", updatedPins);
+    const pinnedVids = {};
+    Object.entries(updatedPins).map(([key, value]) => {
+      if (value.isPinned) {
+        const subscriber = {
+          isMicOn: value.isMicOn,
+          isCameraOn: value.isCameraOn,
+          isPinned: value.isPinned,
+        };
+        pinnedVids[key] = subscriber;
+      }
+    });
+    console.log("DOES MY PINNED VIDS LOOK LIKE SUBSCRIBERS??", pinnedVids);
+    setPinnedVideos(pinnedVids);
+    // update subscribers to pinnedvideos
+    setSubscribers(updatedPins);
+    // setPinnedVideos(pinnedVideos);
   };
 
   /* Leave session */

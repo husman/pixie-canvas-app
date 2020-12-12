@@ -21,7 +21,7 @@ export default function Toolbar({
   toggleFullscreen,
   leaveSession,
   subscribers,
-  pinnedVideos,
+  updatePinnedVideos,
 }) {
   const [fullscreen, setFullscreen] = useState(false);
   const [pinningVideos, setPinningVideos] = useState(false);
@@ -47,10 +47,9 @@ export default function Toolbar({
     setPinningVideos(true);
   };
 
-  const handleClose = (pinnedVideos) => {
+  const handleUpdatePinnedVideos = (pinnedVideos) => {
     /*  TOOD: Enforce contract that pinned videos can never remove subscribers from the stream, only alters their pinned state */
-    console.log("=========TOOLBAR pinnedVideos=======", pinnedVideos);
-    // updatePinnedVideos(pinnedVideos);
+    updatePinnedVideos(pinnedVideos);
     setPinningVideos(false);
   };
 
@@ -97,7 +96,7 @@ export default function Toolbar({
           <PinVideoDialog
             open={pinningVideos}
             subscribers={subscribers}
-            onClose={handleClose}
+            onClose={handleUpdatePinnedVideos}
           />
         )}
       </div>

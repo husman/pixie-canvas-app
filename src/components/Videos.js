@@ -29,11 +29,8 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
   //   videoLayout = "three";
   // }
 
-  // TODO: Are videos not pinned still on by viewer's choice? YES, can be seen in drop down
-  // Makes drop down expensive to load videos
-  // console.log(`${key}, value.stream`, value || "nada"),
-  //   console.log(`${key}, value.isMicOn`, value.isMicOn),
-  //   console.log(`${key}, value.isCameraOn`, value.isCameraOn);
+  // TODO: When videos are pinned, even though user has stream on, the pinned
+  // video is registered as unpublished for video and audio
   return (
     <div className={`video-container video-${videoLayout}-col`}>
       <div className="video-centering">
@@ -43,7 +40,6 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
           isCameraOn={isCameraOn}
           className="user-stream"
         />
-        {/* TODO: Move pin logic to this component, it is better suited */}
         {pinnedVideos &&
           Object.entries(pinnedVideos).map(([key, value]) => {
             console.log("pinned", value);
