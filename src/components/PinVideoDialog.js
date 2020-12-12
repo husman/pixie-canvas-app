@@ -51,9 +51,8 @@ export default function PinVideoDialog(props) {
                     <PersonIcon />
                   </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={value.stream.streamId} />
                 <Checkbox
-                  checked={user.isPinned}
+                  // checked={user.isPinned}
                   onChange={() => handleCheck(index, value.stream.streamId)}
                   name={value.stream.streamId}
                 />
