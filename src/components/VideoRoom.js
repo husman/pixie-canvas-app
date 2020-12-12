@@ -85,7 +85,7 @@ export default function VideoRoom({ sessionId }) {
       stream: subscriber,
       isMicOn: false,
       isCameraOn: false,
-      // isPinned: false,
+      isPinned: false,
     };
 
     setSubscribers((prevSubscribers) => {
@@ -227,6 +227,7 @@ export default function VideoRoom({ sessionId }) {
               stream={publisher}
               isMicOn={isMicOn}
               isCameraOn={isCameraOn}
+              // isPinned={isPinned}
               subscribers={subscribers}
             />
           )}
