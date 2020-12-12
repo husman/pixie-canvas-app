@@ -6,12 +6,11 @@ export default function StreamComponent({
   stream,
   isMicOn,
   isCameraOn,
-  isPinned,
   className = "",
 }) {
   return (
     <div className={`stream-container ${className}`}>
-      {isPinned && <OvVideo stream={stream} isCameraOn={isCameraOn} />}
+      <OvVideo stream={stream} isCameraOn={isCameraOn} />
 
       <div className="video-status-icons">
         {!isCameraOn && <VideocamOff className="cam-off-icon" />}
