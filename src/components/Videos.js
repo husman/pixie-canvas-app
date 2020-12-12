@@ -6,12 +6,13 @@ import {
   DEFAULT_MAX_VIDEOS,
 } from "./constants/video";
 
-const Videos = ({ stream, isMicOn, isCameraOn, subscribers }) => {
+const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
   const subscribersCt = Object.keys(subscribers).length;
+  const pinnedVideosCt = pinnedVideos && Object.keys(pinnedVideos).length;
   const [totalPinned, setTotalPinned] = useState(0);
   let videoLayout = "one";
 
-  if (subscribersCt == 1) {
+  if (subscribersCt == 2) {
     videoLayout = "two";
   } else {
     videoLayout = "three";
@@ -30,6 +31,9 @@ const Videos = ({ stream, isMicOn, isCameraOn, subscribers }) => {
 
   // TODO: Are videos not pinned still on by viewer's choice? YES, can be seen in drop down
   // Makes drop down expensive to load videos
+  // console.log(`${key}, value.stream`, value || "nada"),
+  //   console.log(`${key}, value.isMicOn`, value.isMicOn),
+  //   console.log(`${key}, value.isCameraOn`, value.isCameraOn);
   return (
     <div className={`video-container video-${videoLayout}-col`}>
       <div className="video-centering">
@@ -40,25 +44,19 @@ const Videos = ({ stream, isMicOn, isCameraOn, subscribers }) => {
           className="user-stream"
         />
         {/* TODO: Move pin logic to this component, it is better suited */}
-        {Object.entries(subscribers).map(([key, value]) => {
-          if (totalPinned < 2) {
-            setTotalPinned((prev) => prev++);
+        {pinnedVideos &&
+          Object.entries(pinnedVideos).map(([key, value]) => {
+            console.log("pinned", value);
             return (
               <Stream
+                key={key}
                 stream={value.stream}
                 className="user-stream"
-                key={key}
                 isMicOn={value.isMicOn}
                 isCameraOn={value.isCameraOn}
-                isPinned={value.isPinned}
               />
             );
-          } else {
-            console.log(`${key}, value.stream`, value || "nada"),
-              console.log(`${key}, value.isMicOn`, value.isMicOn),
-              console.log(`${key}, value.isCameraOn`, value.isCameraOn);
-          }
-        })}
+          })}
       </div>
     </div>
   );

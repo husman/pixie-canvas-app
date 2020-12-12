@@ -14,61 +14,68 @@ import {
 import PersonIcon from "@material-ui/icons/Person";
 import AddIcon from "@material-ui/icons/Add";
 
-export default function PinVideoDialog(props) {
-  const { onClose, subscriber_list, open } = props;
-  const [pinnedVideos, setPinnedVideos] = useState(subscriber_list);
-  const subscribersCt = Object.keys(subscriber_list).length;
+export default function PinVideoDialog({ onClose, subscribers, open }) {
+  const [pinnedVideos, setPinnedVideos] = useState(subscribers);
+  const subscribersCt = Object.keys(subscribers).length;
 
-  const handleUpdatePins = () => {
+  // Update pinned videos in videoroom
+  const syncPinnedVideos = () => {
     onClose(pinnedVideos);
   };
 
-  const handleCheck = async (index, value) => {
-    const newPins = [...pinnedVideos];
-    newPins[index] = { name: value.name, video: !value.video };
-    setPinnedVideos(newPins);
+  const handleCheck = async (subscriberStreamId) => {
+    const subscriber = pinnedVideos[subscriberStreamId];
+    const pinnedSubscriber = {
+      ...subscriber,
+      isPinned: true,
+    };
+    setPinnedVideos((prevSubscribers) => {
+      prevSubscribers[subscriberStreamId] = pinnedSubscriber;
+      return { ...prevSubscribers };
+    });
   };
 
   // TODO: Add a function that takes in a subscriber and pins their video
 
   return (
-    console.log("Pinned Videos", pinnedVideos),
-    (
-      <Dialog
-        onClose={handleUpdatePins}
-        aria-labelledby="simple-dialog-title"
-        open={open}
-      >
-        <DialogTitle id="simple-dialog-title">Pin Videos To Screen</DialogTitle>
-        <List>
-          {pinnedVideos &&
-            subscribersCt &&
-            Object.entries(pinnedVideos).map(([key, value]) => (
-              <ListItem key={key}>
-                {console.log("PINVIDEOSDIALOG subscribers", value)}
-                <ListItemAvatar>
-                  <Avatar>
-                    <PersonIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <Checkbox
-                  // checked={user.isPinned}
-                  onChange={() => handleCheck(index, value.stream.streamId)}
-                  name={value.stream.streamId}
-                />
-              </ListItem>
-            ))}
+    <Dialog
+      onClose={handleUpdatePins}
+      aria-labelledby="simple-dialog-title"
+      open={open}
+    >
+      <DialogTitle id="simple-dialog-title">Pin Videos To Screen</DialogTitle>
+      <List>
+        {subscribersCt &&
+          Object.entries(subscribers).map(([key, value]) => (
+            <ListItem key={key}>
+              <ListItemAvatar>
+                <Avatar>
+                  <PersonIcon />
+                </Avatar>
+                <div>{`User: ${key}`}</div>
+              </ListItemAvatar>
+              {
+                (console.log("======PINVIDEOSDIALOG subscriber=======", key),
+                console.log("==================isPinned==", value.isPinned))
+              }
+              <Checkbox
+                checked={value.isPinned}
+                onChange={() => handleCheck(key)} // index subscriber by streamId in videroom
+                name={value.stream.streamId}
+              />
+              {console.log("Dialog")}
+            </ListItem>
+          ))}
 
-          <ListItem autoFocus button onClick={handleUpdatePins}>
-            <ListItemAvatar>
-              <Avatar>
-                <AddIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary="Update Pins" />
-          </ListItem>
-        </List>
-      </Dialog>
-    )
+        <ListItem autoFocus button onClick={handleUpdatePins}>
+          <ListItemAvatar>
+            <Avatar>
+              <AddIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText primary="Update Pins" />
+        </ListItem>
+      </List>
+    </Dialog>
   );
 }

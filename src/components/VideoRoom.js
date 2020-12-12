@@ -19,7 +19,9 @@ export default function VideoRoom({ sessionId }) {
   const OV = useContext(OvContext);
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
+  const [showVideoContainer, setShowVideoContainer] = useState(false);
   const [subscribers, setSubscribers] = useState({});
+  const [pinnedVideos, setPinnedVideos] = useState({});
   const [publisher, setPublisher] = useState(
     OV.initPublisher(undefined, {
       audioSource: undefined,
@@ -32,7 +34,6 @@ export default function VideoRoom({ sessionId }) {
     })
   );
   const session = useRef(OV.initSession());
-  const [showVideoContainer, setShowVideoContainer] = useState(false);
   const myUserName = useRef(DEFAULT_USERNAME + Math.floor(Math.random() * 100));
   const mainContainerRef = useRef();
 
@@ -193,7 +194,7 @@ export default function VideoRoom({ sessionId }) {
 
   const updatePinnedVideos = (pinnedVideos) => {
     console.log("Videoroom got pinned subscribers: ", pinnedVideos);
-    setSubscribers(pinnedVideos);
+    setPinnedVideos(pinnedVideos);
   };
 
   /* Leave session */
@@ -227,7 +228,7 @@ export default function VideoRoom({ sessionId }) {
               stream={publisher}
               isMicOn={isMicOn}
               isCameraOn={isCameraOn}
-              // isPinned={isPinned}
+              pinnedVideos={pinnedVideos}
               subscribers={subscribers}
             />
           )}
