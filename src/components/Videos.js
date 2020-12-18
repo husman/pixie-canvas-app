@@ -8,8 +8,6 @@ import {
 
 const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
   const subscribersCt = Object.keys(subscribers).length;
-  const pinnedVideosCt = pinnedVideos && Object.keys(pinnedVideos).length;
-  const [totalPinned, setTotalPinned] = useState(0);
   let videoLayout = "one";
 
   if (
@@ -24,8 +22,7 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
     videoLayout = "three";
   }
 
-  // TODO: When videos are pinned, even though user has stream on, the pinned
-  // video is registered as unpublished for video and audio
+  // TODO: Video/Audio is unpublished when pinned
   return (
     <div className={`video-container video-${videoLayout}-col`}>
       <div className="video-centering">

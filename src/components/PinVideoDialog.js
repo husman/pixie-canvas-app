@@ -6,13 +6,11 @@ import {
   ListItem,
   ListItemAvatar,
   Avatar,
-  ListItemText,
   Checkbox,
   Button,
 } from "@material-ui/core";
-import PersonIcon from "@material-ui/icons/Person";
-import AddIcon from "@material-ui/icons/Add";
 import OvVideo from "./OvVideo";
+import PersonIcon from "@material-ui/icons/Person";
 
 export default function PinVideoDialog({
   onCancel,
@@ -23,10 +21,10 @@ export default function PinVideoDialog({
   const [pinnedVideos, setPinnedVideos] = useState(subscribers);
   const subscribersCt = Object.keys(subscribers).length;
 
-  // Update pinned videos in videoroom
+  /* Update pinned videos in videoroom */
   const syncPinnedVideos = (syncVideos) => {
     if (syncVideos) {
-      onClose(pinnedVideos); // on close hierarchy pinvideodialog => toolbar => videoroom
+      onClose(pinnedVideos);
     } else {
       onCancel();
     }
@@ -44,8 +42,6 @@ export default function PinVideoDialog({
     });
   };
 
-  // TODO: Handle checking multiple check boxes at once
-
   return (
     <Dialog
       onClose={() => syncPinnedVideos(false)}
@@ -58,19 +54,23 @@ export default function PinVideoDialog({
           Object.entries(pinnedVideos).map(([key, value]) => (
             <ListItem key={key}>
               <ListItemAvatar>
-                <Avatar>
-                  {/* <PersonIcon /> */}
-                  <OvVideo
-                    stream={value.stream}
-                    isCameraOn={value.isCameraOn}
-                  />
+                <Avatar variant="square">
+                  {value.isCameraOn ? (
+                    <OvVideo
+                      // TODO: Fix display in dialog stream
+                      className="dialog-stream"
+                      stream={value.stream}
+                      isCameraOn={value.isCameraOn}
+                    />
+                  ) : (
+                    <PersonIcon />
+                  )}
                 </Avatar>
                 <div>{`User: ${key}`}</div>
               </ListItemAvatar>
               <Checkbox
                 checked={value.isPinned}
                 onChange={() => handleCheck(key, value.isPinned)}
-                // index subscriber by streamId in videroom
                 name={value.stream.streamId}
               />
             </ListItem>

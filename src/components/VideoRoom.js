@@ -95,8 +95,8 @@ export default function VideoRoom({ sessionId }) {
     });
   };
 
-  // TODO: Add "pinned" attribute to subscriber object or keep a separate shallow copy of subscribers and pinned status
   /* Handle Video/Audio toggle for subscribers */
+  // TODO: PINNED VIDEOS DON'T UPDATE AUTOMATICALLY
   const handleSignalUserChanged = ({ data }) => {
     const dataObj = JSON.parse(data);
     if (dataObj.subscriberId !== publisher.stream.streamId) {
@@ -105,7 +105,7 @@ export default function VideoRoom({ sessionId }) {
           ...prevSubscribers[dataObj.subscriberId],
           isMicOn: dataObj.isMicOn,
           isCameraOn: dataObj.isCameraOn,
-          isPinned: false,
+          isPinned: dataObj.isPinned,
         };
         prevSubscribers[dataObj.subscriberId] = newSubscriberSettings;
         return { ...prevSubscribers };
@@ -193,7 +193,6 @@ export default function VideoRoom({ sessionId }) {
   };
 
   const updatePinnedVideos = (updatedPins) => {
-    console.log("Videoroom got pinned subscribers: ", updatedPins);
     const pinnedVids = {};
     Object.entries(updatedPins).map(([key, value]) => {
       if (value.isPinned) {
@@ -205,11 +204,9 @@ export default function VideoRoom({ sessionId }) {
         pinnedVids[key] = subscriber;
       }
     });
-    console.log("DOES MY PINNED VIDS LOOK LIKE SUBSCRIBERS??", pinnedVids);
     setPinnedVideos(pinnedVids);
     // update subscribers to pinnedvideos
     setSubscribers(updatedPins);
-    // setPinnedVideos(pinnedVideos);
   };
 
   /* Leave session */

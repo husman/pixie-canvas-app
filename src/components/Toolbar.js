@@ -24,7 +24,7 @@ export default function Toolbar({
   updatePinnedVideos,
 }) {
   const [fullscreen, setFullscreen] = useState(false);
-  const [pinningVideos, setPinningVideos] = useState(false);
+  const [isPinningVideos, setPinningVideos] = useState(false);
 
   const handleMicClick = () => {
     micStatusChanged();
@@ -54,7 +54,6 @@ export default function Toolbar({
   };
 
   return (
-    // console.log("Subscribers TOOLBAR", subscribers),
     <header id="header">
       <h3 id="session-title">{sessionId}</h3>
       <div className="nav-buttons-container">
@@ -92,9 +91,9 @@ export default function Toolbar({
         <Button variant="contained" color="primary" onClick={togglePinVideos}>
           Pin Videos
         </Button>
-        {pinningVideos && subscribers && (
+        {isPinningVideos && subscribers && (
           <PinVideoDialog
-            open={pinningVideos}
+            open={isPinningVideos}
             subscribers={subscribers}
             onClose={handleUpdatePinnedVideos}
             onCancel={togglePinVideos}
