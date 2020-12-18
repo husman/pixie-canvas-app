@@ -8,9 +8,11 @@ import {
   Avatar,
   ListItemText,
   Checkbox,
+  Button,
 } from "@material-ui/core";
 import PersonIcon from "@material-ui/icons/Person";
 import AddIcon from "@material-ui/icons/Add";
+import PinVideoForm from "./PinVideoForm";
 
 export default function PinVideoDialog({
   onCancel,
@@ -42,7 +44,7 @@ export default function PinVideoDialog({
     });
   };
 
-  // TODO: Handle
+  // TODO: Handle checking multiple check boxes at once
 
   return (
     <Dialog
@@ -53,7 +55,7 @@ export default function PinVideoDialog({
       <DialogTitle id="simple-dialog-title">Pin Videos To Screen</DialogTitle>
       <List>
         {subscribersCt &&
-          Object.entries(subscribers).map(([key, value]) => (
+          Object.entries(pinnedVideos).map(([key, value]) => (
             <ListItem key={key}>
               <ListItemAvatar>
                 <Avatar>
@@ -61,27 +63,22 @@ export default function PinVideoDialog({
                 </Avatar>
                 <div>{`User: ${key}`}</div>
               </ListItemAvatar>
-              {
-                (console.log("======PINVIDEOSDIALOG subscriber=======", key),
-                console.log("==================isPinned==", value.isPinned))
-              }
               <Checkbox
                 checked={value.isPinned}
-                onChange={() => handleCheck(key, value.isPinned)} // index subscriber by streamId in videroom
+                onChange={() => handleCheck(key, value.isPinned)}
+                // onChange={() => handleCheck(key, value.isPinned)} // index subscriber by streamId in videroom
                 name={value.stream.streamId}
               />
-              {console.log("Dialog")}
+              {
+                (console.log("========================================", key),
+                console.log("=======isPinned====", value.isPinned),
+                console.log("========================================", key))
+              }
             </ListItem>
           ))}
-
-        <ListItem autoFocus button onClick={() => syncPinnedVideos(true)}>
-          <ListItemAvatar>
-            <Avatar>
-              <AddIcon />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary="Update Pins" />
-        </ListItem>
+        <Button type="submit" onClick={() => syncPinnedVideos(true)}>
+          Pin Videos
+        </Button>
       </List>
     </Dialog>
   );

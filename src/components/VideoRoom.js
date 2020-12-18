@@ -105,7 +105,7 @@ export default function VideoRoom({ sessionId }) {
           ...prevSubscribers[dataObj.subscriberId],
           isMicOn: dataObj.isMicOn,
           isCameraOn: dataObj.isCameraOn,
-          // isPinned:,
+          isPinned: false,
         };
         prevSubscribers[dataObj.subscriberId] = newSubscriberSettings;
         return { ...prevSubscribers };
