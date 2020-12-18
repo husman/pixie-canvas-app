@@ -12,22 +12,17 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
   const [totalPinned, setTotalPinned] = useState(0);
   let videoLayout = "one";
 
-  if (subscribersCt == 2) {
+  if (
+    subscribersCt >= DEFAULT_MIN_VIDEOS &&
+    subscribersCt < DEFAULT_MID_MAX_VIDEOS
+  ) {
     videoLayout = "two";
-  } else {
+  } else if (
+    subscribersCt >= DEFAULT_MID_MAX_VIDEOS &&
+    subscribersCt <= DEFAULT_MAX_VIDEOS
+  ) {
     videoLayout = "three";
   }
-  // if (
-  //   subscribersCt >= DEFAULT_MIN_VIDEOS &&
-  //   subscribersCt < DEFAULT_MID_MAX_VIDEOS
-  // ) {
-  //   videoLayout = "two";
-  // } else if (
-  //   subscribersCt >= DEFAULT_MID_MAX_VIDEOS &&
-  //   subscribersCt <= DEFAULT_MAX_VIDEOS
-  // ) {
-  //   videoLayout = "three";
-  // }
 
   // TODO: When videos are pinned, even though user has stream on, the pinned
   // video is registered as unpublished for video and audio

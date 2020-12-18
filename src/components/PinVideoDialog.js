@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import PersonIcon from "@material-ui/icons/Person";
 import AddIcon from "@material-ui/icons/Add";
-import PinVideoForm from "./PinVideoForm";
+import OvVideo from "./OvVideo";
 
 export default function PinVideoDialog({
   onCancel,
@@ -59,26 +59,23 @@ export default function PinVideoDialog({
             <ListItem key={key}>
               <ListItemAvatar>
                 <Avatar>
-                  <PersonIcon />
+                  {/* <PersonIcon /> */}
+                  <OvVideo
+                    stream={value.stream}
+                    isCameraOn={value.isCameraOn}
+                  />
                 </Avatar>
                 <div>{`User: ${key}`}</div>
               </ListItemAvatar>
               <Checkbox
                 checked={value.isPinned}
                 onChange={() => handleCheck(key, value.isPinned)}
-                // onChange={() => handleCheck(key, value.isPinned)} // index subscriber by streamId in videroom
+                // index subscriber by streamId in videroom
                 name={value.stream.streamId}
               />
-              {
-                (console.log("========================================", key),
-                console.log("=======isPinned====", value.isPinned),
-                console.log("========================================", key))
-              }
             </ListItem>
           ))}
-        <Button type="submit" onClick={() => syncPinnedVideos(true)}>
-          Pin Videos
-        </Button>
+        <Button onClick={() => syncPinnedVideos(true)}>Pin Videos</Button>
       </List>
     </Dialog>
   );
