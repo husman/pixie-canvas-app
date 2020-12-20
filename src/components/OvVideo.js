@@ -10,8 +10,5 @@ export default function OvVideo({ stream, isCameraOn }) {
     }
   }, [stream]);
 
-  // TODO: If video not published, display default profile pic
-
   return <video ref={videoRef} autoPlay />;
-  // return <>{isCameraOn ? <video ref={videoRef} autoPlay /> : <Person />}</>;
 }

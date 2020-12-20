@@ -15,13 +15,15 @@ import {
   VIDEO_FRAME_RATE,
 } from "./constants/video";
 
+// TODO: Fix BUG: When User Stream changes, pinned videos does not UPDATE. It thinks that the
+// pinned videos are false in checkbox form but true for stream,
 export default function VideoRoom({ sessionId }) {
   const OV = useContext(OvContext);
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [showVideoContainer, setShowVideoContainer] = useState(false);
   const [subscribers, setSubscribers] = useState({});
-  const [pinnedVideos, setPinnedVideos] = useState({});
+  const [pinnedSubscriberVideos, setPinnedSubscriberVideos] = useState([]);
   const [publisher, setPublisher] = useState(
     OV.initPublisher(undefined, {
       audioSource: undefined,
@@ -65,6 +67,11 @@ export default function VideoRoom({ sessionId }) {
       sendSignalUserChanged();
     }
   }, [isCameraOn, isMicOn]);
+
+  /* Audio/Video Toggle for Subscriber Stream */
+  // useEffect(() => {
+  //   updatePinnedVideos(subscribers);
+  // }, [subscribers]);
 
   /* Signals user changed in session */
   const sendSignalUserChanged = async () => {
@@ -192,21 +199,15 @@ export default function VideoRoom({ sessionId }) {
     setIsMicOn((prev) => !prev);
   };
 
-  const updatePinnedVideos = (updatedPins) => {
-    const pinnedVids = {};
-    Object.entries(updatedPins).map(([key, value]) => {
-      if (value.isPinned) {
-        const subscriber = {
-          isMicOn: value.isMicOn,
-          isCameraOn: value.isCameraOn,
-          isPinned: value.isPinned,
-        };
-        pinnedVids[key] = subscriber;
-      }
+  const updatePinnedVideos = (pinnedVideos) => {
+    // setPinnedSubscriberVideos(pinnedVideos);
+    const pinnedVideoArray = [];
+    pinnedVideos.forEach((subscriberKey) => {
+      pinnedVideoArray.push(subscriberKey);
     });
-    setPinnedVideos(pinnedVids);
-    // update subscribers to pinnedvideos
-    setSubscribers(updatedPins);
+    // pinnedSubscriberVideos.current = pinnedVideos;
+    console.log("Video Room Pinned Videos Updated", pinnedVideoArray);
+    setPinnedSubscriberVideos(pinnedVideoArray);
   };
 
   /* Leave session */
@@ -240,7 +241,7 @@ export default function VideoRoom({ sessionId }) {
               stream={publisher}
               isMicOn={isMicOn}
               isCameraOn={isCameraOn}
-              pinnedVideos={pinnedVideos}
+              pinnedVideos={pinnedSubscriberVideos}
               subscribers={subscribers}
             />
           )}

@@ -43,12 +43,13 @@ export default function Toolbar({
     leaveSession();
   };
 
-  const togglePinVideos = () => {
+  const togglePinnedVideos = () => {
     setPinningVideos((prev) => !prev);
   };
 
   const handleUpdatePinnedVideos = (pinnedVideos) => {
     /*  TOOD: Enforce contract that pinned videos can never remove subscribers from the stream, only alters their pinned state */
+    console.log("================PINNED VIDEOS", pinnedVideos);
     updatePinnedVideos(pinnedVideos);
     setPinningVideos(false);
   };
@@ -88,7 +89,11 @@ export default function Toolbar({
         >
           <PowerSettingsNew />
         </IconButton>
-        <Button variant="contained" color="primary" onClick={togglePinVideos}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={togglePinnedVideos}
+        >
           Pin Videos
         </Button>
         {isPinningVideos && subscribers && (
@@ -96,7 +101,7 @@ export default function Toolbar({
             open={isPinningVideos}
             subscribers={subscribers}
             onClose={handleUpdatePinnedVideos}
-            onCancel={togglePinVideos}
+            onCancel={togglePinnedVideos}
           />
         )}
       </div>

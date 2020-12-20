@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -18,43 +18,44 @@ export default function PinVideoDialog({
   subscribers,
   open,
 }) {
-  const [pinnedVideos, setPinnedVideos] = useState(subscribers);
+  const pinnedSubscriberVideos = useRef(new Set());
   const subscribersCt = Object.keys(subscribers).length;
 
   /* Update pinned videos in videoroom */
-  const syncPinnedVideos = (syncVideos) => {
-    if (syncVideos) {
-      onClose(pinnedVideos);
+  const handlePinnedSubscribersVideoroom = () => {
+    onClose(pinnedSubscriberVideos.current); // update pinned videos and close dialog box
+  };
+
+  const handleCancelPinnedSubscribers = () => {
+    onCancel(); // close dialog box and do nothing
+  };
+
+  const handlePinnedSubscribersList = (key) => {
+    if (pinnedSubscriberVideos.current.has(key)) {
+      pinnedSubscriberVideos.current.delete(key);
     } else {
-      onCancel();
+      pinnedSubscriberVideos.current.add(key);
     }
+    console.log(
+      "UPDATE PINNED SUBSCRIBER LIST",
+      pinnedSubscriberVideos.current
+    );
   };
 
-  const handleCheck = async (subscriberStreamId, isPinned) => {
-    const subscriber = pinnedVideos[subscriberStreamId];
-    const pinnedSubscriber = {
-      ...subscriber,
-      isPinned: !isPinned,
-    };
-    setPinnedVideos((prevSubscribers) => {
-      prevSubscribers[subscriberStreamId] = pinnedSubscriber;
-      return { ...prevSubscribers };
-    });
-  };
-
+  console.log("******************PINNED");
   return (
     <Dialog
-      onClose={() => syncPinnedVideos(false)}
+      onClose={handleCancelPinnedSubscribers}
       aria-labelledby="simple-dialog-title"
       open={open}
     >
       <DialogTitle id="simple-dialog-title">Pin Videos To Screen</DialogTitle>
       <List>
         {subscribersCt &&
-          Object.entries(pinnedVideos).map(([key, value]) => (
+          Object.entries(subscribers).map(([key, value]) => (
             <ListItem key={key}>
-              <ListItemAvatar>
-                <Avatar variant="square">
+              <ListItemAvatar key={key}>
+                <Avatar variant="square" key={key}>
                   {value.isCameraOn ? (
                     <OvVideo
                       // TODO: Fix display in dialog stream
@@ -63,19 +64,20 @@ export default function PinVideoDialog({
                       isCameraOn={value.isCameraOn}
                     />
                   ) : (
-                    <PersonIcon />
+                    <PersonIcon key={key} />
                   )}
                 </Avatar>
                 <div>{`User: ${key}`}</div>
               </ListItemAvatar>
               <Checkbox
-                checked={value.isPinned}
-                onChange={() => handleCheck(key, value.isPinned)}
-                name={value.stream.streamId}
+                onChange={() => {
+                  handlePinnedSubscribersList(key);
+                }}
+                name={key}
               />
             </ListItem>
           ))}
-        <Button onClick={() => syncPinnedVideos(true)}>Pin Videos</Button>
+        <Button onClick={handlePinnedSubscribersVideoroom}>Pin Videos</Button>
       </List>
     </Dialog>
   );
