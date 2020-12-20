@@ -15,8 +15,6 @@ import {
   VIDEO_FRAME_RATE,
 } from "./constants/video";
 
-// TODO: Fix BUG: When User Stream changes, pinned videos does not UPDATE. It thinks that the
-// pinned videos are false in checkbox form but true for stream,
 export default function VideoRoom({ sessionId }) {
   const OV = useContext(OvContext);
   const [isMicOn, setIsMicOn] = useState(false);
@@ -68,11 +66,6 @@ export default function VideoRoom({ sessionId }) {
     }
   }, [isCameraOn, isMicOn]);
 
-  /* Audio/Video Toggle for Subscriber Stream */
-  // useEffect(() => {
-  //   updatePinnedVideos(subscribers);
-  // }, [subscribers]);
-
   /* Signals user changed in session */
   const sendSignalUserChanged = async () => {
     const signalOptions = {
@@ -103,7 +96,6 @@ export default function VideoRoom({ sessionId }) {
   };
 
   /* Handle Video/Audio toggle for subscribers */
-  // TODO: PINNED VIDEOS DON'T UPDATE AUTOMATICALLY
   const handleSignalUserChanged = ({ data }) => {
     const dataObj = JSON.parse(data);
     if (dataObj.subscriberId !== publisher.stream.streamId) {
@@ -200,13 +192,10 @@ export default function VideoRoom({ sessionId }) {
   };
 
   const updatePinnedVideos = (pinnedVideos) => {
-    // setPinnedSubscriberVideos(pinnedVideos);
     const pinnedVideoArray = [];
     pinnedVideos.forEach((subscriberKey) => {
       pinnedVideoArray.push(subscriberKey);
     });
-    // pinnedSubscriberVideos.current = pinnedVideos;
-    console.log("Video Room Pinned Videos Updated", pinnedVideoArray);
     setPinnedSubscriberVideos(pinnedVideoArray);
   };
 

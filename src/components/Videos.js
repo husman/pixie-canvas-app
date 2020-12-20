@@ -8,8 +8,8 @@ import {
 
 const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
   const pinnedSubscribersCt = pinnedVideos.size + 1; // subscribers + user stream
-  let videoLayout = "two";
-  // let videoLayout = "one"; // TODO: Fix single video sizing bug
+  // let videoLayout = "two";
+  let videoLayout = "one"; // TODO: Fix single video sizing bug
 
   if (
     pinnedSubscribersCt >= DEFAULT_MIN_VIDEOS &&
@@ -23,7 +23,6 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
     videoLayout = "three";
   }
 
-  // TODO: Video/Audio is unpublished when pinned
   return (
     <div className={`video-container video-${videoLayout}-col`}>
       <div className="video-centering">
@@ -33,21 +32,28 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
           isCameraOn={isCameraOn}
           className="user-stream"
         />
-        {pinnedVideos.forEach((key) => {
-          console.log("Looping", key);
-          const { stream, isMicOn, isCameraOn } = subscribers[key];
-          console.log("Looping", stream, isMicOn, isCameraOn);
-
-          return (
-            <Stream
-              key={key}
-              stream={stream}
-              isMicOn={isMicOn}
-              isCameraOn={isCameraOn}
-              className="subscriber-stream"
-            />
-          );
-        })}
+        {pinnedSubscribersCt > 6
+          ? pinnedVideos.map((key) => {
+              const { stream, isMicOn, isCameraOn } = key && subscribers[key];
+              return (
+                <Stream
+                  key={key}
+                  stream={stream}
+                  isMicOn={isMicOn}
+                  isCameraOn={isCameraOn}
+                  className="subscriber-stream"
+                />
+              );
+            })
+          : Object.entries(subscribers).map(([key, value]) => (
+              <Stream
+                key={key}
+                stream={value.stream}
+                isMicOn={value.isMicOn}
+                isCameraOn={value.isCameraOn}
+                className="subscriber-stream"
+              />
+            ))}
       </div>
     </div>
   );

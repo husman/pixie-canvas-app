@@ -49,7 +49,6 @@ export default function Toolbar({
 
   const handleUpdatePinnedVideos = (pinnedVideos) => {
     /*  TOOD: Enforce contract that pinned videos can never remove subscribers from the stream, only alters their pinned state */
-    console.log("================PINNED VIDEOS", pinnedVideos);
     updatePinnedVideos(pinnedVideos);
     setPinningVideos(false);
   };
@@ -96,7 +95,7 @@ export default function Toolbar({
         >
           Pin Videos
         </Button>
-        {isPinningVideos && subscribers && (
+        {subscribers && (
           <PinVideoDialog
             open={isPinningVideos}
             subscribers={subscribers}

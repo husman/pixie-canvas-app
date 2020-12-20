@@ -36,13 +36,8 @@ export default function PinVideoDialog({
     } else {
       pinnedSubscriberVideos.current.add(key);
     }
-    console.log(
-      "UPDATE PINNED SUBSCRIBER LIST",
-      pinnedSubscriberVideos.current
-    );
   };
 
-  console.log("******************PINNED");
   return (
     <Dialog
       onClose={handleCancelPinnedSubscribers}
