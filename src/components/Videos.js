@@ -32,28 +32,19 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
           isCameraOn={isCameraOn}
           className="user-stream"
         />
-        {pinnedSubscribersCt > 6
-          ? pinnedVideos.map((key) => {
-              const { stream, isMicOn, isCameraOn } = key && subscribers[key];
-              return (
-                <Stream
-                  key={key}
-                  stream={stream}
-                  isMicOn={isMicOn}
-                  isCameraOn={isCameraOn}
-                  className="subscriber-stream"
-                />
-              );
-            })
-          : Object.entries(subscribers).map(([key, value]) => (
+        {pinnedSubscribersCt > 6 &&
+          pinnedVideos.map((key) => {
+            const { stream, isMicOn, isCameraOn } = key && subscribers[key];
+            return (
               <Stream
                 key={key}
-                stream={value.stream}
-                isMicOn={value.isMicOn}
-                isCameraOn={value.isCameraOn}
+                stream={stream}
+                isMicOn={isMicOn}
+                isCameraOn={isCameraOn}
                 className="subscriber-stream"
               />
-            ))}
+            );
+          })}
       </div>
     </div>
   );

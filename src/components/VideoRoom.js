@@ -86,7 +86,6 @@ export default function VideoRoom({ sessionId }) {
       stream: subscriber,
       isMicOn: false,
       isCameraOn: false,
-      isPinned: false,
     };
 
     setSubscribers((prevSubscribers) => {
@@ -104,7 +103,6 @@ export default function VideoRoom({ sessionId }) {
           ...prevSubscribers[dataObj.subscriberId],
           isMicOn: dataObj.isMicOn,
           isCameraOn: dataObj.isCameraOn,
-          isPinned: dataObj.isPinned,
         };
         prevSubscribers[dataObj.subscriberId] = newSubscriberSettings;
         return { ...prevSubscribers };
