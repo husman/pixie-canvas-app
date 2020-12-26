@@ -8,7 +8,6 @@ import {
 
 const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
   const pinnedSubscribersCt = pinnedVideos.size + 1; // subscribers + user stream
-  // let videoLayout = "two";
   let videoLayout = "one"; // TODO: Fix single video sizing bug
 
   if (
@@ -23,6 +22,8 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
     videoLayout = "three";
   }
 
+  console.log("Pinned Video", pinnedVideos);
+
   return (
     <div className={`video-container video-${videoLayout}-col`}>
       <div className="video-centering">
@@ -32,19 +33,19 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
           isCameraOn={isCameraOn}
           className="user-stream"
         />
-        {pinnedSubscribersCt > 6 &&
-          pinnedVideos.map((key) => {
-            const { stream, isMicOn, isCameraOn } = key && subscribers[key];
-            return (
-              <Stream
-                key={key}
-                stream={stream}
-                isMicOn={isMicOn}
-                isCameraOn={isCameraOn}
-                className="subscriber-stream"
-              />
-            );
-          })}
+        {pinnedVideos.map((key) => {
+          console.log("KEY: ", key);
+          const { stream, isMicOn, isCameraOn } = key && subscribers[key];
+          return (
+            <Stream
+              key={key}
+              stream={stream}
+              isMicOn={isMicOn}
+              isCameraOn={isCameraOn}
+              className="subscriber-stream"
+            />
+          );
+        })}
       </div>
     </div>
   );

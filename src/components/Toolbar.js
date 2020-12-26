@@ -21,6 +21,7 @@ export default function Toolbar({
   toggleFullscreen,
   leaveSession,
   subscribers,
+  pinnedVideos,
   updatePinnedVideos,
 }) {
   const [fullscreen, setFullscreen] = useState(false);
@@ -99,6 +100,7 @@ export default function Toolbar({
           <PinVideoDialog
             open={isPinningVideos}
             subscribers={subscribers}
+            pinnedVideos={pinnedVideos}
             onClose={handleUpdatePinnedVideos}
             onCancel={togglePinnedVideos}
           />
