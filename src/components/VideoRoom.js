@@ -22,6 +22,7 @@ export default function VideoRoom({ sessionId }) {
   const [showVideoContainer, setShowVideoContainer] = useState(false);
   const [subscribers, setSubscribers] = useState({});
   const [pinnedSubscriberVideos, setPinnedSubscriberVideos] = useState([]);
+  // const [pinnedSubscriberVideos, setPinnedSubscriberVideos] = useState([]);
   const [publisher, setPublisher] = useState(
     OV.initPublisher(undefined, {
       audioSource: undefined,
