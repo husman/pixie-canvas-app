@@ -12,7 +12,7 @@ export default function StreamComponent({
   return (
     <div className={`stream-container ${className}`}>
       {/* {isCameraOn ? ( */}
-      <OvVideo stream={stream} isCameraOn={isCameraOn} />
+      <OvVideo stream={stream} isCameraOn={isCameraOn} isIcon={false} />
       {/* ) : (
         // Todo: Fix Styling
         <Person id="person-no-video" />

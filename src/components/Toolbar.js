@@ -91,7 +91,7 @@ export default function Toolbar({
         </IconButton>
         <Button
           variant="contained"
-          color="primary"
+          color="secondary"
           onClick={togglePinnedVideos}
         >
           Pin Videos
@@ -100,7 +100,7 @@ export default function Toolbar({
           <PinVideoDialog
             open={isPinningVideos}
             subscribers={subscribers}
-            pinnedVideos={pinnedVideos}
+            currentPinnedVideos={pinnedVideos}
             onClose={handleUpdatePinnedVideos}
             onCancel={togglePinnedVideos}
           />
