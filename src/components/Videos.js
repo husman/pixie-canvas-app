@@ -7,12 +7,12 @@ import {
 } from "./constants/video";
 
 const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
-  const pinnedSubscribersCt = pinnedVideos.size + 1; // subscribers + user stream
+  const pinnedSubscribersCt = pinnedVideos.length + 1; // subscribers + user stream
   let videoLayout = "one"; // TODO: Fix single video sizing bug
 
   if (
-    pinnedSubscribersCt >= DEFAULT_MIN_VIDEOS &&
-    pinnedSubscribersCt < DEFAULT_MID_MAX_VIDEOS
+    pinnedSubscribersCt > DEFAULT_MIN_VIDEOS &&
+    pinnedSubscribersCt <= DEFAULT_MID_MAX_VIDEOS
   ) {
     videoLayout = "two";
   } else if (
@@ -21,8 +21,6 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
   ) {
     videoLayout = "three";
   }
-
-  console.log("Pinned Video", pinnedVideos);
 
   return (
     <div className={`video-container video-${videoLayout}-col`}>

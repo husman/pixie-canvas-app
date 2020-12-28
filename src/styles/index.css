@@ -7,7 +7,6 @@ body {
   font-family: sans-serif;
   margin: 0;
   --header-size: 4rem;
-  /* --video-margin: 0.5rem; */
 }
 
 /* Nav Bar */
@@ -32,22 +31,20 @@ body {
 }
 
 .video-container {
-  /* height: calc(100vh - var(--header-size)); */
   height: 100%;
-  display: grid;
-  grid-template: 1fr / 1fr;
+  width: 100%;
 }
 
 .video-centering {
-  transform: translate(5%);
   max-width: 100%;
   max-height: 100%;
   --video-ratio: calc(720 / 1280); /* Ratio of the video */
   --col-amount: 1; /* Amount of columns, default 1 column, 1 row = 1 video */
+  display: grid;
   /* Setting the row height to be a factor of the video ratio and the amount of columns */
   /* grid-template-rows: calc((100vw / var(--col-amount)) * var(--video-ratio)); */
   /* Setting the columns to rely on given column amount variable */
-  /* grid-template-columns: repeat(var(--col-amount), 1fr); */
+  grid-template-columns: repeat(var(--col-amount), 1fr);
 }
 
 .video-two-col .video-centering {
@@ -65,6 +62,7 @@ body {
   position: relative;
   background-color: black;
   margin-bottom: 0;
+  text-align: center;
 }
 
 .video-status-icons {
@@ -137,8 +135,8 @@ video {
 }
 
 .MuiSvgIcon-root.person-full {
-  width: 100%;
-  height: 100%;
+  width: 56.25%;
+  height: 56.25%;
 }
 
 .MuiSvgIcon-root.person-icon {
