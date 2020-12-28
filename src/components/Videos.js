@@ -8,7 +8,7 @@ import {
 
 const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
   const pinnedSubscribersCt = pinnedVideos.length + 1; // subscribers + user stream
-  let videoLayout = "one"; // TODO: Fix single video sizing bug
+  let videoLayout = "one";
 
   if (
     pinnedSubscribersCt > DEFAULT_MIN_VIDEOS &&

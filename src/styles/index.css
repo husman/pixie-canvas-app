@@ -3,8 +3,6 @@
 }
 
 body {
-  background-color: rgb(34, 34, 34);
-  font-family: sans-serif;
   margin: 0;
   --header-size: 4rem;
 }
@@ -36,15 +34,18 @@ body {
 }
 
 .video-centering {
-  max-width: 100%;
   max-height: 100%;
+  max-width: 100%;
   --video-ratio: calc(720 / 1280); /* Ratio of the video */
-  --col-amount: 1; /* Amount of columns, default 1 column, 1 row = 1 video */
+  --col-amount: 1; /* Amount of columns, default 1 column */
+  --row-amount: 1; /* Amount of rows, default 1 row */
   display: grid;
-  /* Setting the row height to be a factor of the video ratio and the amount of columns */
-  /* grid-template-rows: calc((100vw / var(--col-amount)) * var(--video-ratio)); */
-  /* Setting the columns to rely on given column amount variable */
-  grid-template-columns: repeat(var(--col-amount), 1fr);
+  grid-template-rows: repeat(var(--row-amount), 1fr);
+
+  grid-template-columns: repeat(
+    var(--col-amount),
+    1fr
+  ); /* Setting the columns to rely on given column amount variable */
 }
 
 .video-two-col .video-centering {
@@ -55,10 +56,11 @@ body {
   --col-amount: 3;
 }
 
-/* Stream */
+/* Video Streams */
 .stream-container {
-  width: 90%;
-  height: 90%;
+  height: calc(100% - var(--header-size));
+  width: 100%;
+
   position: relative;
   background-color: black;
   margin-bottom: 0;
@@ -76,10 +78,9 @@ body {
 }
 
 video {
-  width: 100%;
-  height: 100%;
   max-height: 100%;
   max-width: 100%;
+  object-fit: contain;
 }
 
 /* Form Styles */
@@ -135,8 +136,11 @@ video {
 }
 
 .MuiSvgIcon-root.person-full {
-  width: 56.25%;
-  height: 56.25%;
+  /* background-color: violet; */
+  /* width: 100%;
+  height: 100%:
+  fill: red; */
+  /* object-fit: contain; */
 }
 
 .MuiSvgIcon-root.person-icon {
