@@ -3,7 +3,7 @@ import Person from "@material-ui/icons/Person";
 
 export default function OvVideo({ stream, isCameraOn, isIcon }) {
   const videoRef = useRef();
-  const icon = isIcon ? "icon" : "none";
+  const icon = isIcon ? "icon" : "full";
   useEffect(() => {
     if (stream && !!videoRef && isCameraOn) {
       stream.addVideoElement(videoRef.current);

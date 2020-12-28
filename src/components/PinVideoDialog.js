@@ -11,6 +11,7 @@ import {
   ListItemText,
 } from "@material-ui/core";
 import OvVideo from "./OvVideo";
+import { DEFAULT_MAX_VIDEOS } from "./constants/video";
 
 export default function PinVideoDialog({
   onCancel,
@@ -35,7 +36,7 @@ export default function PinVideoDialog({
   const handlePinnedSubscribersList = (key) => {
     if (
       !proposedPinnedVideos.includes(key) &&
-      proposedPinnedVideos.length + 1 <= 2
+      proposedPinnedVideos.length + 1 <= DEFAULT_MAX_VIDEOS
     ) {
       setPPinnedVideos((prev) => {
         prev.push(key);
@@ -58,16 +59,12 @@ export default function PinVideoDialog({
         {subscribersCt > 0 ? (
           Object.entries(subscribers).map(([key, value]) => (
             <ListItem key={key}>
-              {/* <ListItemAvatar key={key}> */}
-              {/* <Avatar variant="square" key={key}> */}
               <OvVideo
                 stream={value.stream}
                 isCameraOn={value.isCameraOn}
                 isIcon={true}
               />
-              {/* </Avatar> */}
               <div>{`User: ${key}`}</div>
-              {/* </ListItemAvatar> */}
               <Checkbox
                 onChange={() => {
                   handlePinnedSubscribersList(key);
