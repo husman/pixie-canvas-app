@@ -12,6 +12,7 @@ import {
 } from "@material-ui/core";
 import OvVideo from "./OvVideo";
 import { DEFAULT_MAX_VIDEOS } from "./constants/video";
+import Person from "@material-ui/icons/Person";
 
 export default function PinVideoDialog({
   onCancel,
@@ -20,16 +21,18 @@ export default function PinVideoDialog({
   currentPinnedVideos,
   open,
 }) {
-  const [proposedPinnedVideos, setPPinnedVideos] = useState(
+  const [proposedPinnedVideos, setProposedPinnedVideos] = useState(
     currentPinnedVideos
   );
   const subscribersCt = Object.keys(subscribers).length;
   const handlePinnedSubscribersVideoroom = () => {
-    onClose(proposedPinnedVideos); // update pinned videos and close dialog box
+    onClose(
+      proposedPinnedVideos
+    ); /* Update pinned videos and close dialog box */
   };
 
   const handleCancelPinnedSubscribers = () => {
-    onCancel(); // close dialog box and do nothing
+    onCancel(); /* close dialog box and do nothing */
   };
 
   /* Manage Subscribers to be Pinned on the Screen */
@@ -38,12 +41,12 @@ export default function PinVideoDialog({
       !proposedPinnedVideos.includes(key) &&
       proposedPinnedVideos.length + 1 <= DEFAULT_MAX_VIDEOS
     ) {
-      setPPinnedVideos((prev) => {
+      setProposedPinnedVideos((prev) => {
         prev.push(key);
         return [...prev];
       });
     } else {
-      setPPinnedVideos((prev) => prev.filter((item) => item !== key));
+      setProposedPinnedVideos((prev) => prev.filter((item) => item !== key));
     }
   };
 
@@ -54,17 +57,23 @@ export default function PinVideoDialog({
       className="pin-video-dialog"
       open={open}
     >
-      <DialogTitle id="simple-dialog-title">Pin up to 6 videos</DialogTitle>
+      <DialogTitle id="simple-dialog-title">PIN UP TO 6 VIDEOS</DialogTitle>
       <List>
         {subscribersCt > 0 ? (
           Object.entries(subscribers).map(([key, value]) => (
             <ListItem key={key}>
-              <OvVideo
-                stream={value.stream}
-                isCameraOn={value.isCameraOn}
-                isIcon={true}
-              />
-              <div>{`User: ${key}`}</div>
+              <Avatar>
+                {value.isCameraOn ? (
+                  <OvVideo
+                    stream={value.stream}
+                    isCameraOn={value.isCameraOn}
+                    isIcon={true}
+                  />
+                ) : (
+                  <Person />
+                )}
+              </Avatar>
+              <div className="pin-dialog-username">{`USER: ${key}`}</div>
               <Checkbox
                 onChange={() => {
                   handlePinnedSubscribersList(key);
