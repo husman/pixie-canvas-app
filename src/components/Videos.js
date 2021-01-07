@@ -10,21 +10,19 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
   const pinnedSubscribersCt = pinnedVideos.length + 1; // subscribers + user stream
   let videoLayout = "one";
 
-  if (
-    pinnedSubscribersCt > DEFAULT_MIN_VIDEOS &&
-    pinnedSubscribersCt <= DEFAULT_MID_MAX_VIDEOS
-  ) {
+  if (pinnedSubscribersCt === 2) {
     videoLayout = "two";
-  } else if (
-    pinnedSubscribersCt >= DEFAULT_MID_MAX_VIDEOS &&
-    pinnedSubscribersCt <= DEFAULT_MAX_VIDEOS
-  ) {
+  } else if (pinnedSubscribersCt === 3) {
     videoLayout = "three";
+  } else if (pinnedSubscribersCt === 4) {
+    videoLayout = "four";
+  } else if (pinnedSubscribersCt >= 5) {
+    videoLayout = "full";
   }
 
   return (
-    <div className={`video-container video-${videoLayout}-col`}>
-      <div className="video-centering">
+    <>
+      <div className={`video-container video-${videoLayout}-col`}>
         <Stream
           stream={stream}
           isMicOn={isMicOn}
@@ -32,7 +30,6 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
           className="user-stream"
         />
         {pinnedVideos.map((key) => {
-          console.log("KEY: ", key);
           const { stream, isMicOn, isCameraOn } = key && subscribers[key];
           return (
             <Stream
@@ -40,12 +37,12 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
               stream={stream}
               isMicOn={isMicOn}
               isCameraOn={isCameraOn}
-              className="subscriber-stream"
+              className={`user-stream`}
             />
           );
         })}
       </div>
-    </div>
+    </>
   );
 };
 
