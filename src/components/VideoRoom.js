@@ -208,7 +208,7 @@ export default function VideoRoom({ sessionId }) {
   };
 
   return (
-    <div className="container" ref={mainContainerRef}>
+    <div className="video-room" ref={mainContainerRef}>
       {publisher && (
         <>
           <Toolbar
