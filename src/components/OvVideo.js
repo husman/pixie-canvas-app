@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from "react";
 
-export default function OvVideo({ stream, isCameraOn }) {
+export default function OvVideo({ stream }) {
   const videoRef = useRef();
   useEffect(() => {
-    if (stream && !!videoRef && isCameraOn) {
+    if (stream && !!videoRef) {
       stream.addVideoElement(videoRef.current);
     }
-  }, [stream, isCameraOn]);
+  }, [stream]);
 
   return <video ref={videoRef} autoPlay />;
 }

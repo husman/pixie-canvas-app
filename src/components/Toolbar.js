@@ -91,6 +91,7 @@ export default function Toolbar({
         <Button
           variant="contained"
           color="secondary"
+          className="nav-btn"
           onClick={togglePinnedVideos}
         >
           Pin Videos
