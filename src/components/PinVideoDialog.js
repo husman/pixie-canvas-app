@@ -37,15 +37,16 @@ export default function PinVideoDialog({
 
   /* Manage Subscribers to be Pinned on the Screen */
   const handlePinnedSubscribersList = (key) => {
+    /* Includes user stream video */
     if (
       !proposedPinnedVideos.includes(key) &&
-      proposedPinnedVideos.length + 1 <= DEFAULT_MAX_VIDEOS
+      proposedPinnedVideos.length + 1 < DEFAULT_MAX_VIDEOS
     ) {
       setProposedPinnedVideos((prev) => {
         prev.push(key);
         return [...prev];
       });
-    } else {
+    } else if (proposedPinnedVideos.includes(key)) {
       setProposedPinnedVideos((prev) => prev.filter((item) => item !== key));
     }
   };
