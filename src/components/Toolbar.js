@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import PinVideoDialog from "./PinVideoDialog";
+import { PIN_VIDEOS_BUTTON } from "./constants/translation";
 import {
   VideocamOff,
   MicOff,
@@ -9,7 +11,6 @@ import {
   PowerSettingsNew,
 } from "@material-ui/icons";
 import { IconButton, Button } from "@material-ui/core";
-import PinVideoDialog from "./PinVideoDialog";
 
 export default function Toolbar({
   stream,
@@ -94,7 +95,7 @@ export default function Toolbar({
           className="nav-btn"
           onClick={togglePinnedVideos}
         >
-          Pin Videos
+          {PIN_VIDEOS_BUTTON}
         </Button>
         {subscribers && (
           <PinVideoDialog

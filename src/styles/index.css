@@ -162,18 +162,17 @@ video {
   text-align: center;
 }
 
+.MuiListItem-root.MuiListItem-gutters {
+  display: flex;
+  justify-content: space-between;
+}
+
 .MuiSvgIcon-root.person-icon {
   width: 5rem;
   height: auto;
 }
 
-.dialog-stream-icon {
-  width: 5rem;
-  height: auto;
-  margin: 1rem;
-}
-
-.MuiButton-outlined.pin-dialog {
+.MuiButton-outlined.dialog-submit {
   width: -webkit-fill-available;
 }
 

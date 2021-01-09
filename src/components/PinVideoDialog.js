@@ -1,4 +1,11 @@
 import React, { useRef, useState } from "react";
+import OvVideo from "./OvVideo";
+import { DEFAULT_MAX_VIDEOS } from "./constants/video";
+import {
+  PIN_DIALOG_TITLE,
+  PIN_DIALOG_EMPTY_MEETING,
+  PIN_VIDEOS_BUTTON,
+} from "./constants/translation";
 import {
   Dialog,
   DialogTitle,
@@ -10,8 +17,6 @@ import {
   Button,
   ListItemText,
 } from "@material-ui/core";
-import OvVideo from "./OvVideo";
-import { DEFAULT_MAX_VIDEOS } from "./constants/video";
 import PersonIcon from "@material-ui/icons/Person";
 
 export default function PinVideoDialog({
@@ -47,27 +52,23 @@ export default function PinVideoDialog({
         return [...prev];
       });
     } else if (proposedPinnedVideos.includes(key)) {
-      setProposedPinnedVideos((prev) => prev.filter((item) => item !== key));
+      setProposedPinnedVideos((prev) =>
+        prev.filter((subscriberId) => subscriberId !== key)
+      );
     }
   };
 
   return (
-    <Dialog
-      onClose={handleCancelPinnedSubscribers}
-      aria-labelledby="simple-dialog-title"
-      className="pin-video-dialog"
-      open={open}
-    >
-      <DialogTitle id="simple-dialog-title">PIN UP TO 6 VIDEOS</DialogTitle>
+    <Dialog onClose={handleCancelPinnedSubscribers} open={open}>
+      <DialogTitle>{PIN_DIALOG_TITLE}</DialogTitle>
       <List>
         {subscribersCt > 0 ? (
           Object.entries(subscribers).map(([key, value]) => (
             <ListItem key={key}>
               <ListItemAvatar>
-                <Avatar variant="square" className="dialog-video-icon ">
+                <Avatar variant="square" className="dialog-video-icon">
                   {value.isCameraOn ? (
                     <OvVideo
-                      className="dialog-stream"
                       stream={value.stream}
                       isCameraOn={value.isCameraOn}
                     />
@@ -87,15 +88,15 @@ export default function PinVideoDialog({
             </ListItem>
           ))
         ) : (
-          <ListItemText>You are the only one in this meeting</ListItemText>
+          <ListItemText>{PIN_DIALOG_EMPTY_MEETING}</ListItemText>
         )}
         <Button
-          className="pin-dialog"
+          className="dialog-submit"
           onClick={handlePinnedSubscribersVideoroom}
           variant="outlined"
           color="secondary"
         >
-          Pin Videos
+          {PIN_VIDEOS_BUTTON}
         </Button>
       </List>
     </Dialog>

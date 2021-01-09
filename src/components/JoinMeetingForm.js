@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { v4 as uuidv4 } from "uuid";
+import { NEW_MEETING, JOIN_MEETING } from "./constants/translation";
 
 const JoinMeetingForm = ({ onSubmit }) => {
   const [joiningNewMeeting, setJoiningNewMeeting] = useState(false);
@@ -23,7 +24,7 @@ const JoinMeetingForm = ({ onSubmit }) => {
     <form onSubmit={handleSubmit} className="meeting-form">
       {!joiningNewMeeting && (
         <>
-          <button className="btn">Create a New Meeting</button>
+          <button className="btn">{NEW_MEETING}</button>
           <button onClick={toggleJoinMeeting} className="btn">
             Join a Meeting
           </button>
@@ -34,7 +35,7 @@ const JoinMeetingForm = ({ onSubmit }) => {
           <button className="back btn" onClick={toggleJoinMeeting}>
             Back
           </button>
-          <label className="label">Meeting ID</label>
+          <label className="label">{JOIN_MEETING}</label>
           <input
             type="text"
             onChange={(e) => handleChange.callback(e.currentTarget.value)}
