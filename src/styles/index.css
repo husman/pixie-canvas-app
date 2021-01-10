@@ -91,7 +91,7 @@ body {
   /* height: 100%; */
   width: 100%;
   position: relative;
-  background-color: black;
+  background: black;
   margin-bottom: 0;
   text-align: center;
 }
@@ -174,10 +174,17 @@ video {
 }
 
 .meeting-form-icon-background {
+  display: flex;
+  justify-content: center;
   width: 2.25rem;
-  height: 2.5rem;
+  height: 2.25rem;
+  /* top: 5px; */
   box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
   border-radius: 3px;
+}
+
+.meeting-form-icon-background svg {
+  transform: translateY(0.25rem);
 }
 
 .meeting-form-icon-background.false {
