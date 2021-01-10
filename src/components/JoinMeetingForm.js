@@ -1,12 +1,22 @@
 import React, { useCallback, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { v4 as uuidv4 } from "uuid";
-import { NEW_MEETING, JOIN_MEETING } from "./constants/translation";
-// import MicOn from "../../public/mic-on"; // ./mic-on-icon-24.png";
+import { MicOnIcon } from "../styles/assets/MicOnIcon";
+import { WebcamOffIcon } from "../styles/assets/WebcamOffIcon";
+import {
+  MEDIA_SETTINGS_TITLE,
+  MEETING_URL_TITLE,
+  NAME_TITLE,
+  NAME_ADVISORY_MESSAGE,
+  WELCOME_MEETING_TITLE,
+  MEDIA_SETTINGS_ADVISORY,
+} from "./constants/translation";
 
 const JoinMeetingForm = ({ onSubmit }) => {
   const [joiningNewMeeting, setJoiningNewMeeting] = useState(false);
   const [meetingUrl, setMeetingUrl] = useState("");
+  const [micSettings, setMicSettings] = useState(true);
+  const [videoSettings, setVideoSettings] = useState(false);
 
   const toggleJoinMeeting = useCallback(() => {
     setJoiningNewMeeting((prev) => !prev);
@@ -16,6 +26,14 @@ const JoinMeetingForm = ({ onSubmit }) => {
     setMeetingUrl(value);
   }, 250);
 
+  const handleMic = () => {
+    setMicSettings((prev) => !prev);
+  };
+
+  const handleVideo = () => {
+    setVideoSettings((prev) => !prev);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(meetingUrl || uuidv4());
@@ -23,9 +41,9 @@ const JoinMeetingForm = ({ onSubmit }) => {
 
   return (
     <form onSubmit={handleSubmit} className="meeting-form">
-      <h2 className="meeting-form-header">Welcome to your meeting</h2>
+      <h2 className="meeting-form-header">{WELCOME_MEETING_TITLE}</h2>
       <h2>
-        <label className="meeting-form-label">Your Meeting URL</label>
+        <label className="meeting-form-label">{MEETING_URL_TITLE}</label>
       </h2>
       <input
         type="text"
@@ -33,9 +51,9 @@ const JoinMeetingForm = ({ onSubmit }) => {
         onChange={(e) => handleChange.callback(e.currentTarget.value)}
       />
       <h2>
-        <label className="meeting-form-label">Your Name</label>
+        <label className="meeting-form-label">{NAME_TITLE}</label>
       </h2>
-      <p className="meeting-form-info">(Other participants will see this)</p>
+      <p className="meeting-form-info">{NAME_ADVISORY_MESSAGE}</p>
       <input
         type="text"
         className="meeting-form-input"
@@ -43,54 +61,42 @@ const JoinMeetingForm = ({ onSubmit }) => {
       />
       <h2>
         <label className="meeting-form-label media-settings">
-          Your Audio + Video Settings
+          {MEDIA_SETTINGS_TITLE}
         </label>
       </h2>
-      <p className="meeting-form-info">
-        (You can update these settings once the meeting begins)
-      </p>
+      <p className="meeting-form-info">{MEDIA_SETTINGS_ADVISORY}</p>
       {/* Meeting Room Icons */}
       <div className="meeting-form-icons">
         <div className="meeting-form-icon">
-          <div className="meeting-form-icon-png" />
-          <img className="meeting-form-mic-on" src={MicOn} />
-          <h3 className="meeting-form-icon-desc">Mic On</h3>
+          <div
+            className={`meeting-form-icon-background ${micSettings}`}
+            onClick={handleMic}
+          >
+            <MicOnIcon />
+          </div>
+          <h2 className="meeting-form-icon-cap">
+            {micSettings ? "Mic On" : "Mic Off"}
+          </h2>
         </div>
         <div className="meeting-form-icon">
-          <div className="meeting-form-icon-png">
-            <img className="meeting-form-mic-on" src="" />
+          <div
+            className={`meeting-form-icon-background ${videoSettings}`}
+            onClick={handleVideo}
+          >
+            <WebcamOffIcon />
           </div>
-          <h3 className="meeting-form-icon-desc">Webcam On</h3>
+          <h2 className="meeting-form-icon-cap">
+            {videoSettings ? "Webcam On" : "Webcam Off"}
+          </h2>
         </div>
       </div>
+      <button type="submit" className="join-btn">
+        Join Meeting
+      </button>
+      <h2 href="http://neetos.com/" className="meeting-form-help">
+        Need help joining your meeting?
+      </h2>
     </form>
-    // <form onSubmit={handleSubmit} className="meeting-form">
-    //   {!joiningNewMeeting && (
-    //     <>
-    //       <button className="btn">{NEW_MEETING}</button>
-    //       <button onClick={toggleJoinMeeting} className="btn">
-    //         Join a Meeting
-    //       </button>
-    //     </>
-    //   )}
-    //   {joiningNewMeeting && (
-    //     <>
-    //       <button className="back btn" onClick={toggleJoinMeeting}>
-    //         Back
-    //       </button>
-    //       <label className="label">{JOIN_MEETING}</label>
-    //       <input
-    //         type="text"
-    //         onChange={(e) => handleChange.callback(e.currentTarget.value)}
-    //         className="input"
-    //         size="40"
-    //       />
-    //       <button type="submit" className="btn">
-    //         Join
-    //       </button>
-    //     </>
-    //   )}
-    // </form>
   );
 };
 

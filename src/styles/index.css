@@ -113,19 +113,20 @@ video {
 /* Welcome Form Background */
 .meeting-form {
   position: absolute;
+  margin: 0;
+  top: 50%;
+  transform: translateY(-50%);
   width: 100%;
   height: 100%;
-  text-align: center;
   background: #ffffff;
   border-radius: 5px;
-  display: flex;
-  flex-direction: column;
+  text-align: center;
+  font-family: Avenir Next;
   color: #000000;
 }
 
 /* Welcome to your meeting */
 .meeting-form-header {
-  font-family: Avenir Next;
   font-size: 20px;
   line-height: 27px;
   color: #000000;
@@ -133,14 +134,12 @@ video {
 
 /* Your Meeting URL */
 .meeting-form-label {
-  font-family: Avenir Next;
   font-size: 12px;
   line-height: 16px;
 }
 
 /* Your Audio + Video Settings */
 .meeting-form-label.media-settings {
-  font-family: Avenir Next;
   font-size: 12px;
   line-height: 16px;
   text-align: center;
@@ -159,10 +158,65 @@ video {
 
 /* (Other participants will see this) */
 .meeting-form-info {
-  font-family: Avenir Next;
   font-size: 10px;
   line-height: 14px;
   /* identical to box height */
+}
+
+.meeting-form-icons {
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+}
+
+.meeting-form-icon {
+  text-align: -webkit-center;
+}
+
+.meeting-form-icon-background {
+  width: 2.25rem;
+  height: 2.5rem;
+  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.meeting-form-icon-background.false {
+  background: #ec9090;
+}
+
+.meeting-form-icon-background.true {
+  background: #ffffff;
+}
+
+.meeting-form-icon-cap {
+  font-size: 10px;
+  line-height: 14px;
+}
+
+.join-btn {
+  /* position: absolute; */
+  color: white;
+  background: #0177b5;
+  border-radius: 4px;
+}
+
+.meeting-form-help {
+  text-decoration: none;
+  display: block;
+  width: fit-content;
+  margin: auto;
+  font-size: 12px;
+  line-height: 16px;
+  /* identical to box height */
+
+  color: #0177b5;
+  background: inherit;
+  text-shadow: none;
+  border-radius: 0.2em;
+  border-bottom: none;
+  border-left: none;
+
+  transition: none;
 }
 
 .btn {
