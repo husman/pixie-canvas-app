@@ -110,16 +110,59 @@ video {
   object-fit: contain;
 }
 
-/* Form Styles */
+/* Welcome Form Background */
 .meeting-form {
-  background: white;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 2rem;
-  border-radius: 1rem;
+  width: 100%;
+  height: 100%;
   text-align: center;
+  background: #ffffff;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  color: #000000;
+}
+
+/* Welcome to your meeting */
+.meeting-form-header {
+  font-family: Avenir Next;
+  font-size: 20px;
+  line-height: 27px;
+  color: #000000;
+}
+
+/* Your Meeting URL */
+.meeting-form-label {
+  font-family: Avenir Next;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+/* Your Audio + Video Settings */
+.meeting-form-label.media-settings {
+  font-family: Avenir Next;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: center;
+
+  color: #000000;
+}
+
+.meeting-form-input {
+  width: 216.93px;
+  height: 33.5px;
+  /* background: #ffffff; */
+  border: 1px solid #bfd4ed;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+/* (Other participants will see this) */
+.meeting-form-info {
+  font-family: Avenir Next;
+  font-size: 10px;
+  line-height: 14px;
+  /* identical to box height */
 }
 
 .btn {
