@@ -41,8 +41,10 @@ const JoinMeetingForm = ({ onSubmit }) => {
     onSubmit(meetingUrl || uuidv4());
   };
 
+  const icons = () => {};
+
   return (
-    <form onSubmit={handleSubmit} className="meeting-form">
+    <form /*onSubmit={handleSubmit}*/ className="meeting-form">
       <h2 className="meeting-form-header">{WELCOME_MEETING_TITLE}</h2>
       <h2>
         <label className="meeting-form-label">{MEETING_URL_TITLE}</label>
@@ -92,6 +94,7 @@ const JoinMeetingForm = ({ onSubmit }) => {
           </h2>
         </div>
       </div>
+      {/* /Meeting Room Icons */}
       <button type="submit" className="join-btn">
         Join Meeting
       </button>

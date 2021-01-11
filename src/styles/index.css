@@ -166,7 +166,6 @@ video {
 .meeting-form-icons {
   display: flex;
   justify-content: center;
-  /* align-items: center; */
 }
 
 .meeting-form-icon .mic-icon {
@@ -202,9 +201,14 @@ video {
 
 .join-btn {
   /* position: absolute; */
+  width: 30%;
   color: white;
   background: #0177b5;
   border-radius: 4px;
+  box-shadow: none;
+  padding: 1rem;
+  border-style: none;
+  margin-bottom: 1rem;
 }
 
 .meeting-form-help {
