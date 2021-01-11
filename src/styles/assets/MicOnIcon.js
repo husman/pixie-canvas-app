@@ -1,7 +1,7 @@
 import React from "react";
 
 export const MicOnIcon = ({ fill = "black" }) => (
-  <svg width="20" height="28" viewBox="0 0 20 28" fill="none">
+  <svg width="20" height="28" viewBox="-2 -2 24 24" fill="none">
     <path
       fill-rule="evenodd"
       clip-rule="evenodd"

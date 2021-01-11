@@ -1,8 +1,10 @@
 import React, { useCallback, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { v4 as uuidv4 } from "uuid";
+import { MicOffIcon } from "../styles/assets/MicOffIcon";
 import { MicOnIcon } from "../styles/assets/MicOnIcon";
 import { WebcamOffIcon } from "../styles/assets/WebcamOffIcon";
+import { WebcamOnIcon } from "../styles/assets/WebcamOnIcon";
 import {
   MEDIA_SETTINGS_TITLE,
   MEETING_URL_TITLE,
@@ -69,10 +71,10 @@ const JoinMeetingForm = ({ onSubmit }) => {
       <div className="meeting-form-icons">
         <div className="meeting-form-icon">
           <div
-            className={`meeting-form-icon-background ${micSettings}`}
+            className={`meeting-form-icon-background ${micSettings} mic-icon`}
             onClick={handleMic}
           >
-            <MicOnIcon />
+            {micSettings ? <MicOnIcon /> : <MicOffIcon />}
           </div>
           <h2 className="meeting-form-icon-cap">
             {micSettings ? "Mic On" : "Mic Off"}
@@ -80,10 +82,10 @@ const JoinMeetingForm = ({ onSubmit }) => {
         </div>
         <div className="meeting-form-icon">
           <div
-            className={`meeting-form-icon-background ${videoSettings}`}
+            className={`meeting-form-icon-background ${videoSettings} video-icon`}
             onClick={handleVideo}
           >
-            <WebcamOffIcon />
+            {videoSettings ? <WebcamOnIcon /> : <WebcamOffIcon />}
           </div>
           <h2 className="meeting-form-icon-cap">
             {videoSettings ? "Webcam On" : "Webcam Off"}
