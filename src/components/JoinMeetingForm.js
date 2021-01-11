@@ -45,62 +45,64 @@ const JoinMeetingForm = ({ onSubmit }) => {
 
   return (
     <form /*onSubmit={handleSubmit}*/ className="meeting-form">
-      <h2 className="meeting-form-header">{WELCOME_MEETING_TITLE}</h2>
-      <h2>
-        <label className="meeting-form-label">{MEETING_URL_TITLE}</label>
-      </h2>
-      <input
-        type="text"
-        className="meeting-form-input"
-        onChange={(e) => handleChange.callback(e.currentTarget.value)}
-      />
-      <h2>
-        <label className="meeting-form-label">{NAME_TITLE}</label>
-      </h2>
-      <p className="meeting-form-info">{NAME_ADVISORY_MESSAGE}</p>
-      <input
-        type="text"
-        className="meeting-form-input"
-        onChange={(e) => handleChange.callback(e.currentTarget.value)}
-      />
-      <h2>
-        <label className="meeting-form-label media-settings">
-          {MEDIA_SETTINGS_TITLE}
-        </label>
-      </h2>
-      <p className="meeting-form-info">{MEDIA_SETTINGS_ADVISORY}</p>
-      {/* Meeting Room Icons */}
-      <div className="meeting-form-icons">
-        <div className="meeting-form-icon">
-          <div
-            className={`meeting-form-icon-background ${micSettings} mic-icon`}
-            onClick={handleMic}
-          >
-            {micSettings ? <MicOnIcon /> : <MicOffIcon />}
+      <div className="meeting-form-contents">
+        <h2 className="meeting-form-header">{WELCOME_MEETING_TITLE}</h2>
+        <h2>
+          <label className="meeting-form-label">{MEETING_URL_TITLE}</label>
+        </h2>
+        <input
+          type="text"
+          className="meeting-form-input"
+          onChange={(e) => handleChange.callback(e.currentTarget.value)}
+        />
+        <h2>
+          <label className="meeting-form-label">{NAME_TITLE}</label>
+        </h2>
+        <p className="meeting-form-info">{NAME_ADVISORY_MESSAGE}</p>
+        <input
+          type="text"
+          className="meeting-form-input"
+          onChange={(e) => handleChange.callback(e.currentTarget.value)}
+        />
+        <h2>
+          <label className="meeting-form-label media-settings">
+            {MEDIA_SETTINGS_TITLE}
+          </label>
+        </h2>
+        <p className="meeting-form-info">{MEDIA_SETTINGS_ADVISORY}</p>
+        {/* Meeting Room Icons */}
+        <div className="meeting-form-icons">
+          <div className="meeting-form-icon">
+            <div
+              className={`meeting-form-icon-background ${micSettings} mic-icon`}
+              onClick={handleMic}
+            >
+              {micSettings ? <MicOnIcon /> : <MicOffIcon />}
+            </div>
+            <h2 className="meeting-form-icon-cap">
+              {micSettings ? "Mic On" : "Mic Off"}
+            </h2>
           </div>
-          <h2 className="meeting-form-icon-cap">
-            {micSettings ? "Mic On" : "Mic Off"}
-          </h2>
-        </div>
-        <div className="meeting-form-icon">
-          <div
-            className={`meeting-form-icon-background ${videoSettings} video-icon`}
-            onClick={handleVideo}
-          >
-            {videoSettings ? <WebcamOnIcon /> : <WebcamOffIcon />}
+          <div className="meeting-form-icon">
+            <div
+              className={`meeting-form-icon-background ${videoSettings} video-icon`}
+              onClick={handleVideo}
+            >
+              {videoSettings ? <WebcamOnIcon /> : <WebcamOffIcon />}
+            </div>
+            <h2 className="meeting-form-icon-cap">
+              {videoSettings ? "Webcam On" : "Webcam Off"}
+            </h2>
           </div>
-          <h2 className="meeting-form-icon-cap">
-            {videoSettings ? "Webcam On" : "Webcam Off"}
-          </h2>
         </div>
+        {/* End of Meeting Room Icons */}
+        <button type="submit" className="join-btn">
+          Join Meeting
+        </button>
+        <h2 href="http://neetos.com/" className="meeting-form-help">
+          Need help joining your meeting?
+        </h2>
       </div>
-      {/* /Meeting Room Icons */}
-      <button type="submit" className="join-btn">
-        Join Meeting
-      </button>
-      <h2 href="http://neetos.com/" className="meeting-form-help">
-        Need help joining your meeting?
-      </h2>
     </form>
   );
 };
