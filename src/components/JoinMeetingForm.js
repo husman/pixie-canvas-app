@@ -72,9 +72,9 @@ const JoinMeetingForm = ({ onSubmit }) => {
         <p className="meeting-form-info">{MEDIA_SETTINGS_ADVISORY}</p>
         {/* Meeting Room Icons */}
         <div className="meeting-form-icons">
-          <div className="meeting-form-icon">
+          <div className="meeting-form-icon mic-icon">
             <div
-              className={`meeting-form-icon-background ${micSettings} mic-icon`}
+              className={`meeting-form-icon-background ${micSettings} `}
               onClick={handleMic}
             >
               {micSettings ? <MicOnIcon /> : <MicOffIcon />}
