@@ -45,30 +45,24 @@ const JoinMeetingForm = ({ onSubmit }) => {
 
   return (
     <form /*onSubmit={handleSubmit}*/ className="meeting-form">
-      <div className="meeting-form-contents">
+      <div className="contents">
         <h2 className="meeting-form-header">{WELCOME_MEETING_TITLE}</h2>
-        <h2>
-          <label className="meeting-form-label">{MEETING_URL_TITLE}</label>
-        </h2>
-        <input
-          type="text"
-          className="meeting-form-input"
-          onChange={(e) => handleChange.callback(e.currentTarget.value)}
-        />
-        <h2>
-          <label className="meeting-form-label">{NAME_TITLE}</label>
-        </h2>
-        <p className="meeting-form-info">{NAME_ADVISORY_MESSAGE}</p>
-        <input
-          type="text"
-          className="meeting-form-input"
-          onChange={(e) => handleChange.callback(e.currentTarget.value)}
-        />
-        <h2>
-          <label className="meeting-form-label media-settings">
-            {MEDIA_SETTINGS_TITLE}
-          </label>
-        </h2>
+        <div className="input-body">
+          <label>{MEETING_URL_TITLE}</label>
+          <input
+            type="text"
+            className="meeting-form-input"
+            onChange={(e) => handleChange.callback(e.currentTarget.value)}
+          />
+          <label>{NAME_TITLE}</label>
+          <p className="meeting-form-info">{NAME_ADVISORY_MESSAGE}</p>
+          <input
+            type="text"
+            className="meeting-form-input"
+            onChange={(e) => handleChange.callback(e.currentTarget.value)}
+          />
+        </div>
+        <label className="media-settings">{MEDIA_SETTINGS_TITLE}</label>
         <p className="meeting-form-info">{MEDIA_SETTINGS_ADVISORY}</p>
         {/* Meeting Room Icons */}
         <div className="meeting-form-icons">
@@ -99,9 +93,9 @@ const JoinMeetingForm = ({ onSubmit }) => {
         <button type="submit" className="join-btn">
           Join Meeting
         </button>
-        <h2 href="http://neetos.com/" className="meeting-form-help">
+        <a href="http://neetos.com/" className="meeting-form-help">
           Need help joining your meeting?
-        </h2>
+        </a>
       </div>
     </form>
   );

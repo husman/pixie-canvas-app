@@ -120,12 +120,15 @@ video {
   background: #ffffff;
   height: 100%;
   border-radius: 5px;
-  text-align: center;
+  /* text-align: center; */
   font-family: Avenir Next;
   color: #000000;
 }
 
-.meeting-form-contents {
+.meeting-form .contents {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-top: 5rem;
 }
 
@@ -136,14 +139,26 @@ video {
   color: #000000;
 }
 
+.input-body {
+  width: 50%;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.input-body label {
+  text-align: left;
+}
+
 /* Your Meeting URL */
-.meeting-form-label {
+.meeting-form label,
+.meeting-form a {
   font-size: 12px;
   line-height: 16px;
+  font-weight: bold;
 }
 
 /* Your Audio + Video Settings */
-.meeting-form-label.media-settings {
+.meeting-form.media-settings {
   font-size: 12px;
   line-height: 16px;
   text-align: center;
