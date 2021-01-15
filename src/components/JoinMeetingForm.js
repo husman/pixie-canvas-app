@@ -49,21 +49,26 @@ const JoinMeetingForm = ({ onSubmit }) => {
         <h2 className="meeting-form-header">{WELCOME_MEETING_TITLE}</h2>
         <div className="input-body">
           <label>{MEETING_URL_TITLE}</label>
+          <br />
           <input
             type="text"
             className="meeting-form-input"
             onChange={(e) => handleChange.callback(e.currentTarget.value)}
           />
-          <label>{NAME_TITLE}</label>
-          <p className="meeting-form-info">{NAME_ADVISORY_MESSAGE}</p>
+          <div className="meeting-form-info">
+            <label>{NAME_TITLE}</label>
+            <span>{NAME_ADVISORY_MESSAGE}</span>
+          </div>
           <input
             type="text"
             className="meeting-form-input"
             onChange={(e) => handleChange.callback(e.currentTarget.value)}
           />
         </div>
-        <label className="media-settings">{MEDIA_SETTINGS_TITLE}</label>
-        <p className="meeting-form-info">{MEDIA_SETTINGS_ADVISORY}</p>
+        <div className="meeting-form-info media">
+          <label className="settings">{MEDIA_SETTINGS_TITLE}</label>
+          <p>{MEDIA_SETTINGS_ADVISORY}</p>
+        </div>
         {/* Meeting Room Icons */}
         <div className="meeting-form-icons">
           <div className="meeting-form-icon mic-icon">

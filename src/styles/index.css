@@ -69,7 +69,6 @@ body {
 .video-four-col {
   --col-amount: 2;
   --row-amount: 2;
-  /* height: 100%; */
 }
 
 .video-four-col video {
@@ -88,7 +87,6 @@ body {
 
 /* Video Streams */
 .stream-container {
-  /* height: 100%; */
   width: 100%;
   position: relative;
   background: black;
@@ -117,19 +115,21 @@ video {
   top: 50%;
   transform: translateY(-50%);
   width: 100%;
+  height: 100%;
   background: #ffffff;
   height: 100%;
   border-radius: 5px;
-  /* text-align: center; */
   font-family: Avenir Next;
   color: #000000;
 }
 
 .meeting-form .contents {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  margin-top: 5rem;
 }
 
 /* Welcome to your meeting */
@@ -137,49 +137,55 @@ video {
   font-size: 20px;
   line-height: 27px;
   color: #000000;
-}
-
-.input-body {
-  width: 50%;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.input-body label {
-  text-align: left;
+  margin-bottom: 1.5rem;
 }
 
 /* Your Meeting URL */
-.meeting-form label,
-.meeting-form a {
+.meeting-form label {
   font-size: 12px;
   line-height: 16px;
   font-weight: bold;
+  text-align: left;
 }
 
-/* Your Audio + Video Settings */
-.meeting-form.media-settings {
-  font-size: 12px;
-  line-height: 16px;
-  text-align: center;
-
-  color: #000000;
+.meeting-form p {
+  margin: 0;
 }
 
 .meeting-form-input {
   width: 216.93px;
   height: 33.5px;
-  /* background: #ffffff; */
   border: 1px solid #bfd4ed;
   box-sizing: border-box;
   border-radius: 2px;
+  margin-top: 0.25rem;
 }
 
-/* (Other participants will see this) */
 .meeting-form-info {
   font-size: 10px;
   line-height: 14px;
+  width: 100%;
+  margin-top: 2.5rem;
   /* identical to box height */
+}
+
+/* (Other participants will see this) */
+.meeting-form-info span {
+  margin-left: 0.25rem;
+  /* identical to box height */
+}
+
+/* (Other participants will see this) */
+.meeting-form-info.media {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+/* Your Audio + Video Settings */
+.meeting-form-info.settings {
+  font-size: 12px;
+  line-height: 16px;
+  color: #000000;
 }
 
 .meeting-form-icons {
@@ -188,18 +194,17 @@ video {
   justify-content: center;
 }
 
-.meeting-form-icon.mic-icon {
-  margin-right: 1rem;
-}
-
 .meeting-form-icon-background {
   display: flex;
   justify-content: center;
   width: 3.5rem;
   height: 3rem;
-  /* top: 5px; */
   box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
   border-radius: 3px;
+}
+
+.meeting-form-icon.mic-icon {
+  margin-right: 1.5rem;
 }
 
 .meeting-form-icon-background svg {
@@ -217,14 +222,16 @@ video {
 .meeting-form-icon-cap {
   font-size: 10px;
   line-height: 14px;
+  text-align: center;
 }
 
 .join-btn {
-  /* position: absolute; */
+  font-size: 12px;
+  line-height: 16px;
+  text-align: center;
   font-weight: bold;
-  /* height: */
-  width: 40%;
   color: white;
+  width: 10.5rem;
   background: #0177b5;
   border-radius: 4px;
   box-shadow: none;
@@ -234,21 +241,19 @@ video {
 }
 
 .meeting-form-help {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+
+  color: #0177b5;
   text-decoration: none;
   display: block;
   width: fit-content;
-  margin: auto;
-  font-size: 12px;
-  line-height: 16px;
-  /* identical to box height */
-
-  color: #0177b5;
   background: inherit;
   text-shadow: none;
   border-radius: 0.2em;
   border-bottom: none;
   border-left: none;
-
   transition: none;
 }
 
