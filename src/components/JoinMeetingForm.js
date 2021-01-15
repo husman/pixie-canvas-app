@@ -14,18 +14,18 @@ import {
   MEDIA_SETTINGS_ADVISORY,
 } from "./constants/translation";
 
-const JoinMeetingForm = ({ onSubmit }) => {
-  const [joiningNewMeeting, setJoiningNewMeeting] = useState(false);
+const JoinMeetingForm = ({ onSubmit, name, micOn, cameraOn }) => {
   const [meetingUrl, setMeetingUrl] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [micSettings, setMicSettings] = useState(true);
   const [videoSettings, setVideoSettings] = useState(false);
 
-  const toggleJoinMeeting = useCallback(() => {
-    setJoiningNewMeeting((prev) => !prev);
-  }, [setJoiningNewMeeting]);
-
-  const handleChange = useDebouncedCallback((value) => {
+  const handleMeetingURL = useDebouncedCallback((value) => {
     setMeetingUrl(value);
+  }, 250);
+
+  const handleDisplayName = useDebouncedCallback((value) => {
+    setDisplayName(value);
   }, 250);
 
   const handleMic = () => {
@@ -38,13 +38,15 @@ const JoinMeetingForm = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    /* Default Submit with no meetingURL creates a NewMeeting */
     onSubmit(meetingUrl || uuidv4());
+    name(displayName);
+    micOn(micSettings);
+    cameraOn(videoSettings);
   };
 
-  const icons = () => {};
-
   return (
-    <form /*onSubmit={handleSubmit}*/ className="meeting-form">
+    <form onSubmit={handleSubmit} className="meeting-form">
       <div className="contents">
         <h2 className="meeting-form-header">{WELCOME_MEETING_TITLE}</h2>
         <div className="input-body">
@@ -53,7 +55,7 @@ const JoinMeetingForm = ({ onSubmit }) => {
           <input
             type="text"
             className="meeting-form-input"
-            onChange={(e) => handleChange.callback(e.currentTarget.value)}
+            onChange={(e) => handleMeetingURL.callback(e.currentTarget.value)}
           />
           <div className="meeting-form-info">
             <label>{NAME_TITLE}</label>
@@ -62,7 +64,7 @@ const JoinMeetingForm = ({ onSubmit }) => {
           <input
             type="text"
             className="meeting-form-input"
-            onChange={(e) => handleChange.callback(e.currentTarget.value)}
+            onChange={(e) => handleDisplayName.callback(e.currentTarget.value)}
           />
         </div>
         <div className="meeting-form-info media">

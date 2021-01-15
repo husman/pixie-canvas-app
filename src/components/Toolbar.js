@@ -17,6 +17,7 @@ export default function Toolbar({
   isMicOn,
   isCameraOn,
   sessionId,
+  displayName,
   micStatusChanged,
   camStatusChanged,
   toggleFullscreen,
@@ -54,6 +55,7 @@ export default function Toolbar({
     setPinningVideos(false);
   };
 
+  console.log("My name is", displayName);
   return (
     <header id="header">
       <h3 id="session-title">{sessionId}</h3>

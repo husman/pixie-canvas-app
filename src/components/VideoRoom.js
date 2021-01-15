@@ -15,10 +15,10 @@ import {
   VIDEO_FRAME_RATE,
 } from "./constants/video";
 
-export default function VideoRoom({ sessionId }) {
+export default function VideoRoom({ sessionId, name, micOn, cameraOn }) {
   const OV = useContext(OvContext);
-  const [isMicOn, setIsMicOn] = useState(false);
-  const [isCameraOn, setIsCameraOn] = useState(false);
+  const [isMicOn, setIsMicOn] = useState(micOn);
+  const [isCameraOn, setIsCameraOn] = useState(cameraOn);
   const [showVideoContainer, setShowVideoContainer] = useState(false);
   const [subscribers, setSubscribers] = useState({});
   const [pinnedSubscriberVideos, setPinnedSubscriberVideos] = useState([]);
@@ -26,15 +26,17 @@ export default function VideoRoom({ sessionId }) {
     OV.initPublisher(undefined, {
       audioSource: undefined,
       videoSource: undefined,
-      publishAudio: isMicOn || false,
-      publishVideo: isCameraOn || false,
+      publishAudio: isMicOn,
+      publishVideo: isCameraOn,
       resolution: RESOLUTION,
       frameRate: VIDEO_FRAME_RATE,
       insertMode: INSERT_MODE,
     })
   );
   const session = useRef(OV.initSession());
-  const myUserName = useRef(DEFAULT_USERNAME + Math.floor(Math.random() * 100));
+  const myUserName = useRef(
+    name || DEFAULT_USERNAME + Math.floor(Math.random() * 100)
+  );
   const mainContainerRef = useRef();
 
   /* Initialize Video/Audio Session */
