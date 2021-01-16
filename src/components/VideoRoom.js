@@ -222,6 +222,7 @@ export default function VideoRoom({ sessionId, name, micOn, cameraOn }) {
             isMicOn={isMicOn}
             isCameraOn={isCameraOn}
             sessionId={sessionId}
+            displayName={name}
             subscribers={subscribers}
             pinnedVideos={pinnedSubscriberVideos}
             updatePinnedVideos={updatePinnedVideos}

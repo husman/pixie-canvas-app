@@ -42,7 +42,7 @@ export default function PinVideoDialog({
 
   /* Manage Subscribers to be Pinned on the Screen */
   const handlePinnedSubscribersList = (key) => {
-    /* Includes user stream video */
+    /* Including user stream video count */
     if (
       !proposedPinnedVideos.includes(key) &&
       proposedPinnedVideos.length + 1 < DEFAULT_MAX_VIDEOS
