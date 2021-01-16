@@ -1,22 +1,12 @@
 import React from "react";
 import Stream from "./Stream";
-import {
-  DEFAULT_MIN_VIDEOS,
-  DEFAULT_MID_MAX_VIDEOS,
-  DEFAULT_MAX_VIDEOS,
-} from "./constants/video";
+import { DEFAULT_MAX_VIDEOS } from "./constants/video";
 
 const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
   const pinnedSubscribersCt = pinnedVideos.length + 1; // subscribers + user stream
-  let videoLayout = "one";
+  let videoLayout = `${pinnedSubscribersCt}`;
 
-  if (pinnedSubscribersCt === 2) {
-    videoLayout = "two";
-  } else if (pinnedSubscribersCt === 3) {
-    videoLayout = "three";
-  } else if (pinnedSubscribersCt === 4) {
-    videoLayout = "four";
-  } else if (pinnedSubscribersCt >= 5) {
+  if (pinnedSubscribersCt >= DEFAULT_MAX_VIDEOS) {
     videoLayout = "full";
   }
 
@@ -27,9 +17,9 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
           stream={stream}
           isMicOn={isMicOn}
           isCameraOn={isCameraOn}
-          className="user-stream"
+          className="stream-0"
         />
-        {pinnedVideos.map((key) => {
+        {pinnedVideos.map((key, index) => {
           const { stream, isMicOn, isCameraOn } = key && subscribers[key];
           return (
             <Stream
@@ -37,7 +27,7 @@ const Videos = ({ stream, isMicOn, isCameraOn, pinnedVideos, subscribers }) => {
               stream={stream}
               isMicOn={isMicOn}
               isCameraOn={isCameraOn}
-              className={`user-stream`}
+              className={`stream-${index + 1}`}
             />
           );
         })}
