@@ -206,18 +206,9 @@ body {
   object-fit: contain;
 }
 
-.video-2-col video {
-  height: 100%;
-  width: 100%;
-}
 .video-3-col {
   --col-amount: 3;
   --row-amount: 1;
-}
-
-.video-3-col video {
-  height: 100%;
-  width: 100%;
 }
 
 .video-4-col {
@@ -227,18 +218,12 @@ body {
 
 .video-4-col video {
   width: 90%;
-  height: 100%;
 }
 
 /* Grid Layout Centering for Five Streams */
 .video-5-col {
   --col-amount: 6;
   --row-amount: 2;
-}
-
-.video-5-col video {
-  height: 100%;
-  width: 100%;
 }
 
 .video-5-col .stream-0 {
@@ -271,11 +256,6 @@ body {
   --row-amount: 2;
 }
 
-.video-full-col video {
-  height: 100%;
-  width: 100%;
-}
-
 /* Video Streams */
 .stream-container {
   width: 100%;
@@ -297,6 +277,8 @@ body {
 
 video {
   object-fit: contain;
+  height: 100%;
+  width: 100%;
 }
 
 .MuiDialog-paper {
