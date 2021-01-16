@@ -4,8 +4,10 @@ export const MEETING_URL_TITLE = "Your Meeting URL";
 export const NAME_TITLE = "Your Name";
 export const NAME_ADVISORY_MESSAGE = "(Other participants will see this)";
 export const MEDIA_SETTINGS_TITLE = "Your Audio + Video Settings";
-export const MEDIA_SETTINGS_ADVISORY =
+export const MEDIA_ADVISORY_MESSAGE =
   "(You can update these settings once the meeting begins)";
+export const JOIN_MEETING = "Join Meeting";
+export const JOIN_HELP_MESSAGE = "Need help joining your meeting?";
 
 /* Pin Videos Dialog Text */
 export const PIN_VIDEOS_BUTTON = "Pin Videos";

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { v4 as uuidv4 } from "uuid";
 import { MicOffIcon } from "../styles/assets/MicOffIcon";
@@ -11,7 +11,9 @@ import {
   NAME_TITLE,
   NAME_ADVISORY_MESSAGE,
   WELCOME_MEETING_TITLE,
-  MEDIA_SETTINGS_ADVISORY,
+  MEDIA_ADVISORY_MESSAGE,
+  JOIN_HELP_MESSAGE,
+  JOIN_MEETING,
 } from "./constants/translation";
 
 const JoinMeetingForm = ({ onSubmit, name, micOn, cameraOn }) => {
@@ -38,7 +40,7 @@ const JoinMeetingForm = ({ onSubmit, name, micOn, cameraOn }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    /* Default Submit with no meetingURL creates a NewMeeting */
+    /* NOTE: Default Submit with no meetingURL/meetingID creates a NewMeeting */
     onSubmit(meetingUrl || uuidv4());
     name(displayName);
     micOn(micSettings);
@@ -47,14 +49,15 @@ const JoinMeetingForm = ({ onSubmit, name, micOn, cameraOn }) => {
 
   return (
     <form onSubmit={handleSubmit} className="meeting-form">
-      <div className="contents">
-        <h2 className="meeting-form-header">{WELCOME_MEETING_TITLE}</h2>
-        <div className="input-body">
+      <div className="form-body">
+        <h2>{WELCOME_MEETING_TITLE}</h2>
+
+        {/* Meeting Input Fields */}
+        <div>
           <label>{MEETING_URL_TITLE}</label>
           <br />
           <input
             type="text"
-            className="meeting-form-input"
             onChange={(e) => handleMeetingURL.callback(e.currentTarget.value)}
           />
           <div className="meeting-form-info">
@@ -63,45 +66,49 @@ const JoinMeetingForm = ({ onSubmit, name, micOn, cameraOn }) => {
           </div>
           <input
             type="text"
-            className="meeting-form-input"
             onChange={(e) => handleDisplayName.callback(e.currentTarget.value)}
           />
         </div>
-        <div className="meeting-form-info media">
-          <label className="settings">{MEDIA_SETTINGS_TITLE}</label>
-          <p>{MEDIA_SETTINGS_ADVISORY}</p>
+        <div className="meeting-form-info media-settings">
+          <label>{MEDIA_SETTINGS_TITLE}</label>
+          <p>{MEDIA_ADVISORY_MESSAGE}</p>
         </div>
+
         {/* Meeting Room Icons */}
-        <div className="meeting-form-icons">
-          <div className="meeting-form-icon mic-icon">
+        <div className="icons">
+          {/* Mic Icon */}
+          <div className="mic">
             <div
-              className={`meeting-form-icon-background ${micSettings} `}
+              className={`icon-background ${micSettings} `}
               onClick={handleMic}
             >
               {micSettings ? <MicOnIcon /> : <MicOffIcon />}
             </div>
-            <h2 className="meeting-form-icon-cap">
+            <h2 className="icon-caption">
               {micSettings ? "Mic On" : "Mic Off"}
             </h2>
           </div>
-          <div className="meeting-form-icon">
+
+          {/* Video Icon */}
+          <div className="video">
             <div
-              className={`meeting-form-icon-background ${videoSettings} video-icon`}
+              className={`icon-background ${videoSettings}`}
               onClick={handleVideo}
             >
               {videoSettings ? <WebcamOnIcon /> : <WebcamOffIcon />}
             </div>
-            <h2 className="meeting-form-icon-cap">
+            <h2 className="icon-caption">
               {videoSettings ? "Webcam On" : "Webcam Off"}
             </h2>
           </div>
         </div>
-        {/* End of Meeting Room Icons */}
+
+        {/* Join Meeting */}
         <button type="submit" className="join-btn">
-          Join Meeting
+          {JOIN_MEETING}
         </button>
-        <a href="http://neetos.com/" className="meeting-form-help">
-          Need help joining your meeting?
+        <a href="http://neetos.com/" className="help">
+          {JOIN_HELP_MESSAGE}
         </a>
       </div>
     </form>
