@@ -8,30 +8,36 @@ import {
   STREAM_DESTROYED,
   USER_CHANGED,
 } from "./constants/signals";
-import { RESOLUTION, INSERT_MODE, DEFAULT_USERNAME } from "./constants/video";
+import {
+  RESOLUTION,
+  INSERT_MODE,
+  DEFAULT_USERNAME,
+  VIDEO_FRAME_RATE,
+} from "./constants/video";
 
-export default function VideoRoom({ sessionId }) {
+export default function VideoRoom({ sessionId, name, micOn, cameraOn }) {
   const OV = useContext(OvContext);
-  const [isMicOn, setIsMicOn] = useState(false);
-  const [isCameraOn, setIsCameraOn] = useState(false);
+  const [isMicOn, setIsMicOn] = useState(micOn);
+  const [isCameraOn, setIsCameraOn] = useState(cameraOn);
+  const [showVideoContainer, setShowVideoContainer] = useState(false);
   const [subscribers, setSubscribers] = useState({});
+  const [pinnedSubscriberVideos, setPinnedSubscriberVideos] = useState([]);
   const [publisher, setPublisher] = useState(
     OV.initPublisher(undefined, {
       audioSource: undefined,
       videoSource: undefined,
-      publishAudio: isMicOn || false,
-      publishVideo: isCameraOn || false,
+      publishAudio: isMicOn,
+      publishVideo: isCameraOn,
       resolution: RESOLUTION,
-      frameRate: 30,
+      frameRate: VIDEO_FRAME_RATE,
       insertMode: INSERT_MODE,
     })
   );
-
   const session = useRef(OV.initSession());
-  const [showVideoContainer, setShowVideoContainer] = useState(false);
-  const myUserName = useRef(DEFAULT_USERNAME + Math.floor(Math.random() * 100));
+  const myUserName = useRef(
+    name || DEFAULT_USERNAME + Math.floor(Math.random() * 100)
+  );
   const mainContainerRef = useRef();
-  // const session = useRef(OV.initSession());
 
   /* Initialize Video/Audio Session */
   const init = async () => {
@@ -90,6 +96,7 @@ export default function VideoRoom({ sessionId }) {
     });
   };
 
+  /* Handle Video/Audio toggle for subscribers */
   const handleSignalUserChanged = ({ data }) => {
     const dataObj = JSON.parse(data);
     if (dataObj.subscriberId !== publisher.stream.streamId) {
@@ -121,7 +128,8 @@ export default function VideoRoom({ sessionId }) {
       await session.current.connect(myToken, {
         clientData: myUserName.current,
       });
-      await connectWebCam();
+      /* Publish Video/Audio to session */
+      await session.current.publish(publisher);
     } catch (e) {
       alert("There was an error connecting to the session:", e.message);
       throw e;
@@ -139,29 +147,6 @@ export default function VideoRoom({ sessionId }) {
       const response = await fetch(`${host}/token?meetingUrl=${sessionId}`);
       const { token } = await response.json();
       return token;
-    } catch (e) {
-      throw e;
-    }
-  };
-
-  /* Publish Video/Audio to session */
-  const connectWebCam = async () => {
-    setPublisher(
-      OV.initPublisher(undefined, {
-        audioSource: undefined,
-        videoSource: undefined,
-        publishAudio: isMicOn,
-        publishVideo: isCameraOn,
-        resolution: "1280x720",
-        frameRate: 30,
-        insertMode: "REPLACE",
-      })
-    );
-
-    try {
-      /* **Important**
-      Need a check for if the camera/mic is on, this promise doesn't seem to resolve when camera & mic permissions are blocked */
-      await session.current.publish(publisher);
     } catch (e) {
       throw e;
     }
@@ -206,6 +191,14 @@ export default function VideoRoom({ sessionId }) {
     setIsMicOn((prev) => !prev);
   };
 
+  const updatePinnedVideos = (pinnedVideos) => {
+    const pinnedVideoArray = [];
+    pinnedVideos.forEach((subscriberKey) => {
+      pinnedVideoArray.push(subscriberKey);
+    });
+    setPinnedSubscriberVideos(pinnedVideoArray);
+  };
+
   /* Leave session */
   const leaveSession = () => {
     session && session.current.disconnect();
@@ -217,7 +210,7 @@ export default function VideoRoom({ sessionId }) {
   };
 
   return (
-    <div className="container" ref={mainContainerRef}>
+    <div className="video-room" ref={mainContainerRef}>
       {publisher && (
         <>
           <Toolbar
@@ -229,12 +222,17 @@ export default function VideoRoom({ sessionId }) {
             isMicOn={isMicOn}
             isCameraOn={isCameraOn}
             sessionId={sessionId}
+            displayName={name}
+            subscribers={subscribers}
+            pinnedVideos={pinnedSubscriberVideos}
+            updatePinnedVideos={updatePinnedVideos}
           />
           {showVideoContainer && (
             <Videos
               stream={publisher}
               isMicOn={isMicOn}
               isCameraOn={isCameraOn}
+              pinnedVideos={pinnedSubscriberVideos}
               subscribers={subscribers}
             />
           )}

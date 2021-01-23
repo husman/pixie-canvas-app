@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-
+import PinVideoDialog from "./PinVideoDialog";
+import { PIN_VIDEOS_BUTTON } from "./constants/translation";
 import {
   VideocamOff,
   MicOff,
@@ -9,19 +10,24 @@ import {
   FullscreenExit,
   PowerSettingsNew,
 } from "@material-ui/icons";
-import { IconButton } from "@material-ui/core";
+import { IconButton, Button } from "@material-ui/core";
 
 export default function Toolbar({
   stream,
   isMicOn,
   isCameraOn,
   sessionId,
+  displayName,
   micStatusChanged,
   camStatusChanged,
   toggleFullscreen,
   leaveSession,
+  subscribers,
+  pinnedVideos,
+  updatePinnedVideos,
 }) {
   const [fullscreen, setFullscreen] = useState(false);
+  const [isPinningVideos, setPinningVideos] = useState(false);
 
   const handleMicClick = () => {
     micStatusChanged();
@@ -38,6 +44,15 @@ export default function Toolbar({
 
   const handleLeaveClick = () => {
     leaveSession();
+  };
+
+  const togglePinnedVideos = () => {
+    setPinningVideos((prev) => !prev);
+  };
+
+  const handleUpdatePinnedVideos = (pinnedVideos) => {
+    updatePinnedVideos(pinnedVideos);
+    setPinningVideos(false);
   };
 
   return (
@@ -75,6 +90,23 @@ export default function Toolbar({
         >
           <PowerSettingsNew />
         </IconButton>
+        <Button
+          variant="contained"
+          color="secondary"
+          className="nav-btn"
+          onClick={togglePinnedVideos}
+        >
+          {PIN_VIDEOS_BUTTON}
+        </Button>
+        {subscribers && (
+          <PinVideoDialog
+            open={isPinningVideos}
+            subscribers={subscribers}
+            currentPinnedVideos={pinnedVideos}
+            onClose={handleUpdatePinnedVideos}
+            onCancel={togglePinnedVideos}
+          />
+        )}
       </div>
     </header>
   );

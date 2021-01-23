@@ -5,6 +5,9 @@ import OvContext from "../context/openVidu";
 
 export default function Video() {
   const [sessionId, setSessionId] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [isMicOn, setIsMicOn] = useState(true);
+  const [isCameraOn, setIsCameraOn] = useState(false);
   const [openVidu, setOpenVidu] = useState(null);
 
   useEffect(() => {
@@ -19,10 +22,20 @@ export default function Video() {
 
   return (
     <OvContext.Provider value={openVidu}>
-      {!sessionId ? (
-        <JoinMeetingForm onSubmit={setSessionId} />
+      {!sessionId && !displayName ? (
+        <JoinMeetingForm
+          onSubmit={setSessionId}
+          name={setDisplayName}
+          micOn={setIsMicOn}
+          cameraOn={setIsCameraOn}
+        />
       ) : (
-        <VideoRoom sessionId={sessionId} />
+        <VideoRoom
+          sessionId={sessionId}
+          name={displayName}
+          micOn={isMicOn}
+          cameraOn={isCameraOn}
+        />
       )}
     </OvContext.Provider>
   );

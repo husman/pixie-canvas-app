@@ -3,21 +3,176 @@
 }
 
 body {
-  background-color: rgb(34, 34, 34);
-  font-family: sans-serif;
   margin: 0;
-  --header-size: 4rem;
-  --video-margin: 0.5rem;
+  --header-size: 3rem;
 }
 
-/* Nav Bar */
+/* ===============WELCOME JOIN MEETING FORM============ */
+/* Welcome Form Background */
+.meeting-form {
+  position: absolute;
+  margin: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  height: 100%;
+  border-radius: 5px;
+  font-family: Avenir Next;
+  color: #000000;
+}
+
+.meeting-form .form-body {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Welcome to your meeting */
+.meeting-form h2 {
+  font-size: 20px;
+  line-height: 27px;
+  color: #000000;
+  margin-bottom: 1.5rem;
+}
+
+/* Your Meeting URL */
+.meeting-form label {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.meeting-form p {
+  margin: 0;
+}
+
+/* Meeting Form Input Fields */
+.meeting-form input {
+  font-family: Avenir;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+  font-size: 12px;
+  line-height: 16px;
+  width: 216.93px;
+  height: 33.5px;
+  border: 1px solid #bfd4ed;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.meeting-form-info {
+  font-size: 10px;
+  line-height: 14px;
+  width: 100%;
+  margin-top: 2.5rem;
+}
+
+/* (Other participants will see this) */
+.meeting-form-info span {
+  margin-left: 0.25rem;
+}
+
+/* (Other participants will see this) */
+.meeting-form .media-settings {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+/* Meeting Form Media Icons */
+.meeting-form .icons {
+  margin-top: 1rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  justify-content: center;
+}
+
+.meeting-form .icon-background {
+  display: flex;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3rem;
+  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.meeting-form .icons .mic {
+  margin-right: 1.65rem;
+}
+
+.meeting-form .icon-background svg {
+  transform: translateY(0.25rem);
+}
+
+/* Toggle On/Off Media */
+.meeting-form .icon-background.false {
+  background: #ec9090;
+}
+
+.meeting-form .icon-background.true {
+  background: #ffffff;
+}
+
+/* Media Icons */
+.meeting-form .icon-caption {
+  font-size: 10px;
+  line-height: 14px;
+  text-align: center;
+}
+
+/* Join Button */
+.join-btn {
+  font-size: 12px;
+  line-height: 16px;
+  text-align: center;
+  font-weight: bold;
+  color: white;
+  width: 10.5rem;
+  background: #0177b5;
+  border-radius: 4px;
+  box-shadow: none;
+  padding: 0.75rem;
+  border-style: none;
+  margin-bottom: 1rem;
+}
+
+/* Need help joining your meeting? */
+.meeting-form .help {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+
+  color: #0177b5;
+  text-decoration: none;
+  display: block;
+  width: fit-content;
+  background: inherit;
+  text-shadow: none;
+  border-radius: 0.2em;
+  border-bottom: none;
+  border-left: none;
+  transition: none;
+}
+
+/* ======================VIDEO ROOM==================== */
+.video-room {
+  width: 100%;
+  height: 100%;
+}
+
+/* Video room Nav Bar */
 #header {
   background: rgb(80, 80, 80);
-  margin: 0;
   color: white;
-  padding: 1rem;
-  padding-bottom: 0;
-  height: var(--header-size);
+  padding-left: 0.5rem;
+  grid-column: 1 / 3;
+  grid-row: 1 / 2;
+  align-content: center;
 }
 
 #session-title {
@@ -31,51 +186,83 @@ body {
   display: inline-block;
 }
 
+/* Grid Layout Video Streams */
 .video-container {
-  --videos-cont-height: calc(100vh - var(--header-size));
+  height: calc(100vh - var(--header-size));
   width: 100%;
-  height: var(--videos-cont-height);
-  max-height: 100%;
-  --margin: calc(var(--video-margin) * 2);
-  position: relative;
+  --col-amount: 1; /* Amount of columns, default 1 column */
+  --row-amount: 1; /* Amount of rows, default 1 row */
+  display: grid;
+  grid-column-gap: 0.25rem;
+  align-items: center;
+  justify-content: center;
+  grid-template-rows: repeat(var(--row-amount), 1fr);
+  grid-template-columns: repeat(var(--col-amount), 1fr);
 }
 
-.video-centering {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  text-align: center;
-  width: 100%;
+.video-2-col {
+  --col-amount: 2;
+  --row-amount: 1;
+  object-fit: contain;
 }
 
-.video-one-col {
-  --size: calc(100% - var(--margin));
+.video-3-col {
+  --col-amount: 3;
+  --row-amount: 1;
 }
 
-.video-two-col {
-  --size: calc(50% - var(--margin));
+.video-4-col {
+  --col-amount: 2;
+  --row-amount: 2;
 }
 
-.video-three-col {
-  --size: calc(33% - var(--margin));
+.video-4-col video {
+  width: 90%;
 }
 
-.video-three-col .stream-container,
-.video-two-col .stream-container {
-  max-height: 48%;
-  width: calc(var(--videos-cont-height) * 0.85);
+/* Grid Layout Centering for Five Streams */
+.video-5-col {
+  --col-amount: 6;
+  --row-amount: 2;
 }
 
-/* Stream */
+.video-5-col .stream-0 {
+  grid-column: 1 / span 2;
+  grid-row: 1 / 2;
+}
+
+.video-5-col .stream-1 {
+  grid-column: 3 / span 2;
+  grid-row: 1 / 2;
+}
+
+.video-5-col .stream-2 {
+  grid-column: 5 / span 2;
+  grid-row: 1 / 2;
+}
+
+.video-5-col .stream-3 {
+  grid-column: 2 / span 2;
+  grid-row: 2 / 3;
+}
+
+.video-5-col .stream-4 {
+  grid-column: 4 / span 2;
+  grid-row: 2 / 3;
+}
+
+.video-full-col {
+  --col-amount: 3;
+  --row-amount: 2;
+}
+
+/* Video Streams */
 .stream-container {
-  display: inline-block;
-  width: auto;
-  max-width: var(--size);
-  height: auto;
+  width: 100%;
   position: relative;
-  background-color: black;
-  margin: var(--video-margin);
+  background: black;
   margin-bottom: 0;
+  text-align: center;
 }
 
 .video-status-icons {
@@ -89,52 +276,39 @@ body {
 }
 
 video {
-  width: 100%;
+  object-fit: contain;
   height: 100%;
-  max-height: 100%;
-  max-width: 100%;
+  width: 100%;
 }
 
-/* Form Styles */
-.meeting-form {
-  background: white;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 2rem;
-  border-radius: 1rem;
+.MuiDialog-paper {
+  padding: 1.5rem;
+}
+
+.MuiTypography-h6 {
   text-align: center;
 }
 
-.btn {
-  border: 1px solid black;
-  background: transparent;
-  border-radius: 10rem;
-  padding: 0.5rem;
-  transition: 0.3s all;
-  cursor: pointer;
+.MuiListItem-root.MuiListItem-gutters {
+  display: flex;
+  justify-content: space-between;
 }
 
-.btn:hover {
-  background: lightgray;
+.MuiSvgIcon-root.person-icon {
+  width: 5rem;
+  height: auto;
 }
 
-.btn:focus {
-  outline: none;
+.MuiButton-outlined.dialog-submit {
+  width: -webkit-fill-available;
 }
 
-.meeting-form .btn,
-.meeting-form .input {
-  margin: 0.5rem;
+.dialog-video-icon video {
+  height: 100%;
+  width: auto;
 }
 
-.input {
-  border: 1px solid grey;
-  border-radius: 10rem;
-  padding: 0.5rem;
-}
-
-.input:focus {
-  outline: none;
+.dialog-username {
+  margin: 1rem;
+  font-weight: bolder;
 }
